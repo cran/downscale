@@ -1,0 +1,76 @@
+NEWS for downscale package
+
+Changes for 1.0
+---------------
+09/10/2015
+upgrain and upgrain.threshold: 'All Presences' changed to 'All_Occurrences'
+upgrain and upgrain.threshold: bugs fixed when selecting number of scales
+upgrain: plotting now optional
+DataInput: bug in scale of endemism corrected
+Vignettes updated
+
+Changes for 1.0
+---------------
+18/05/2015
+plot and predict changed to s3 methods
+help files and examples updated
+Tutorial vignette added 
+
+Changes for 1.0
+---------------
+08/05/2015
+Raster package now depends
+Argument names harmonised across functions
+Option to specify starting parameters
+More plotting arguments
+Calculates AOO as well as occupancy
+Upgraining vignette added
+
+Changes for 0.7
+---------------
+24/04/2015
+Function upgrain.threshold added to explore trade-offs in threshold selection
+upgrain now allows thresholds of the four default thresholds
+
+Changes for 0.6
+---------------
+14/04/2015
+Plotting added to upgrain function
+Hui model added
+
+Changes for 0.5
+---------------
+13/03/2015
+Starting parameters modified
+Corrected plotting when 0's predicted
+
+Changes for 0.5
+---------------
+24/02/2015
+ensemble.predict: means calculated as mean of log occupancies
+ensemble.predict: warning messages for inconsistent results
+
+23/02/2015
+package.rd file updated
+ensemble - different tolerances allowed for modelling and predicting
+
+Changes for 0.4
+---------------
+05/02/2015
+plot=TRUE added to ensemble plotting
+optimisation of logistic model now includes lower bounds
+optimisation of GNB model now includes upper and lower bounds
+
+Changes for 0.3
+---------------
+04/02/2015
+ensemble.downscale function added
+
+Changes for 0.2
+---------------
+03/02/2015
+plotting function added and plotting option added to 'predict.downscale'
+output of function downscale defined as class 'downscale'
+output of function predict.downscale defined as class 'predict.downscale'
+outputs updated to include observed data for use in the plot function
+help files for downscale and predict.downscale updated

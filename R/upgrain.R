@@ -1,10 +1,13 @@
 ################################################################################
 # 
 # upgrain.R
-# Version 1.3
-# 05/10/2015
+# Version 1.4
+# 25/02/2016
 #
 # Updates:
+#   25/02/2016: Bug on extent in standardised rasters fixed
+#               Added option to save all rasters
+#               Change the method of assigning raster values to 'setValues'
 #   05/10/2015: Bug on number of scales fixed
 #               'All_Presences' changed to 'All_occurrences'
 #               Plotting now optional
@@ -32,7 +35,8 @@ upgrain <- function(atlas.data,
                     scales,
                     threshold = NULL,
                     method = "Gain_Equals_Loss",
-                    plot = TRUE) {
+                    plot = TRUE,
+                    return.rasters = FALSE) {
   
   ### Error checking: either a threshold is given or a method selected, not both
   if((is.null(threshold) == FALSE) & (is.null(method) == FALSE)) {
@@ -78,6 +82,7 @@ upgrain <- function(atlas.data,
     }
   }
   
+  ################################################################################
   ### data storage
   original <- data.frame("Cell.area" = rep(NA, scales + 1), 
                          "Extent"  = rep(NA, scales + 1),
@@ -105,26 +110,15 @@ upgrain <- function(atlas.data,
   }
   
   if(class(atlas.data) == "RasterLayer") {
-    atlas_raster <- atlas.data
+    atlas_raster <- atlas.data@data@values
     atlas_raster[atlas_raster > 0] <- 1
+    atlas_raster <- setValues(atlas.data, atlas_raster)
   }
-  
-  ### original atlas data
-  original[1, "Cell.area"] <- raster::res(atlas_raster)[1] ^ 2
-  original[1, "Extent"] <- sum(!is.na(as.vector(atlas_raster[]))) * 
-    original[1, "Cell.area"]
-  original[1, "Occupancy"] <- sum(as.vector(atlas_raster[]) == 1, na.rm = TRUE)/
-    sum(!is.na(as.vector(atlas_raster[])))
   
   ### largest scale (all other layers are extended to equal this raster)
   max_raster <- raster::aggregate(atlas_raster, (2 ^ scales), fun = max)
-  original[scales + 1, "Cell.area"] <- raster::res(max_raster)[1] ^ 2
-  original[scales + 1, "Extent"] <- sum(!is.na(as.vector(max_raster[]))) * 
-    original[scales + 1, "Cell.area"]
-  original[scales + 1, "Occupancy"] <- sum(as.vector(max_raster[]) == 1, 
-                                           na.rm = TRUE) /
-    sum(!is.na(as.vector(max_raster[])))
-  extended[scales + 1, ] <- original[scales + 1, "Occupancy"]
+  atlas_raster_extend <- raster::extend(atlas_raster, 
+                                        raster::extent(max_raster))
   
   ###############################################################
   ########## Set new atlas data to selected threshold (atlas_thresh)
@@ -133,7 +127,7 @@ upgrain <- function(atlas.data,
   boundary_raster <- atlas_raster
   boundary_raster@data@values[!is.na(boundary_raster@data@values)] <- 1
   boundary_raster <- raster::aggregate(boundary_raster, (2 ^ scales), fun = sum)  
-  boundary_raster@data@values <- boundary_raster@data@values / ((2^scales) ^ 2)
+  boundary_raster@data@values <- boundary_raster@data@values / ((2 ^ scales) ^ 2)
   
   ### run for threshold, "Sampled_Only" and "All_Sampled"
   if(is.null(threshold)) {
@@ -177,8 +171,6 @@ upgrain <- function(atlas.data,
                        Extent = NA,
                        OccurrencesExcluded = NA)
     
-    atlas_raster_extend <- raster::extend(atlas_raster, 
-                                          raster::extent(max_raster))
     atlas_boundary <- atlas_raster_extend
     atlas_boundary@data@values[atlas_boundary@data@values == 0] <- 1
     atlas_boundary@data@values[is.na(atlas_boundary@data@values)] <- 0
@@ -240,33 +232,45 @@ upgrain <- function(atlas.data,
     atlas_thresh@data@values[atlas_thresh@data@values == 3] <- 1
   }
   
-  #####################################################################
-  #### upgrain atlas_thresh to all grain sizes
+  ####################################################################
+  #### calculate occupancy at all grain sizes in original atlas data
+  original[1, "Cell.area"] <- raster::res(atlas_raster)[1] ^ 2
+  original[1, "Extent"] <- sum(!is.na(atlas_raster@data@values)) * 
+    original[1, "Cell.area"]
+  original[1, "Occupancy"] <- sum(atlas_raster@data@values == 1, na.rm = TRUE) /
+    sum(!is.na(atlas_raster@data@values))
   
-  ## extend layers to extent of largest raster
-  atlas_raster_extend <- ExtendRaster(max_raster = max_raster, 
-                                      scaled_raster = atlas_thresh,
-                                      scale = scales)
-  extended[1, "Occupancy"] <- sum(atlas_raster_extend@data@values == 1, 
-                                  na.rm = TRUE) / 
-    sum(!is.na(atlas_raster_extend@data@values))
+  for(i in 1:scales) {
+    scaled_raster <- raster::aggregate(atlas_raster, 2 ^ i, fun = max)
+    original[i + 1, "Cell.area"] <- raster::res(scaled_raster)[1] ^ 2
+    original[i + 1, "Extent"] <- sum(!is.na(scaled_raster@data@values)) * 
+      original[i + 1, "Cell.area"]
+    original[i + 1, "Occupancy"] <- sum(scaled_raster@data@values == 1,
+                                        na.rm = TRUE) /
+      sum(!is.na(scaled_raster@data@values))
+  }
+  
+  ####################################################################
+  #### calculate occupancy at all grain sizes in standardised atlas data
+  extended[1, "Cell.area"] <- raster::res(atlas_thresh)[1] ^ 2
+  extended[1, "Extent"] <- sum(!is.na(atlas_thresh@data@values)) * 
+    extended[1, "Cell.area"]
+  extended[1, "Occupancy"] <- sum(atlas_thresh@data@values == 1, na.rm = TRUE) /
+    sum(!is.na(atlas_thresh@data@values))
   
   for(i in 1:scales) {
     scaled_raster <- raster::aggregate(atlas_thresh, 2 ^ i, fun = max)
-    original[i + 1, "Cell.area"] <- raster::res(scaled_raster)[1] ^ 2
-    original[i + 1, "Extent"] <- sum(!is.na(as.vector(scaled_raster[]))) * 
-      original[i + 1, "Cell.area"]
-    original[i + 1, "Occupancy"] <- sum(as.vector(scaled_raster[]) == 1,
+    if(return.rasters == TRUE) {
+      assign(paste("scaled_raster", i, sep = "_"), scaled_raster)
+    }
+    extended[i + 1, "Cell.area"] <- raster::res(scaled_raster)[1] ^ 2
+    extended[i + 1, "Extent"] <- sum(!is.na(scaled_raster@data@values)) *
+      extended[i + 1, "Cell.area"]
+    extended[i + 1, "Occupancy"] <- sum(scaled_raster@data@values == 1,
                                         na.rm = TRUE) /
-      sum(!is.na(as.vector(scaled_raster[])))
-    
-    extended[i + 1, "Occupancy"] <- sum(as.vector(scaled_raster[]) == 1, 
-                                        na.rm = TRUE) /
-      sum(!is.na(as.vector(scaled_raster[])))
+      sum(!is.na(scaled_raster@data@values))
   }
   extended[, "Cell.area"] <- original[, "Cell.area"]
-  extent.extended <- original[scales + 1, "Extent"]
-  extended[, "Extent"] <- extent.extended
   
   ### plotting
   if(plot == TRUE) {  
@@ -310,16 +314,29 @@ upgrain <- function(atlas.data,
            main = paste("Standardised atlas data:\n cell area = ", 
                         original[i + 1, "Cell.area"], sep = ""))    
     }
-  
-  ### revert par to original values
-  par(mfrow = par.original$mfrow, mar = par.original$mar)
+    
+    ### revert par to original values
+    par(mfrow = par.original$mfrow, mar = par.original$mar)
   }
   
   output <- list(threshold = threshold,
-                 extent.stand = extent.extended,
+                 extent.stand = extended[1, "Extent"],
                  occupancy.stand = extended,
                  occupancy.orig = original,
                  atlas.raster.stand = atlas_thresh)
+  if(return.rasters == TRUE) {
+    scaled.rasters <- list()
+    for(i in 1:scales) {
+      scaled.rasters[i] <- get(paste("scaled_raster", i, sep = "_"))
+    }
+    names(scaled.rasters) <- paste("scaled.raster", extended[-1, "Cell.area"], sep = "")
+    output <- list(threshold = threshold,
+                   extent.stand = extended[1, "Extent"],
+                   occupancy.stand = extended,
+                   occupancy.orig = original,
+                   atlas.raster.stand = atlas_thresh,
+                   scaled.rasters = scaled.rasters)
+  }
   class(output) <- "upgrain"
   return(output)
 }

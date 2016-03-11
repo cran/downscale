@@ -1,5 +1,22 @@
 NEWS for downscale package
 
+Changes for 1.2-1
+---------------
+10/03/2015
+Tutorials checked and adjusted
+
+Changes for 1.2-0
+---------------
+09/03/2015
+'spocc' replaced by 'rgbif' in tutorial
+
+Changes for 1.1-0
+---------------
+25/02/2015
+Bug for calculating extent in upgrain function fixed
+upgrain now can return all upgrained rasters
+ExtendRaster function deleted (now obsolete)
+
 Changes for 1.0
 ---------------
 09/10/2015

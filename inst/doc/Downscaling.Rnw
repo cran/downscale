@@ -8,6 +8,7 @@
 \usepackage{parskip}
 \usepackage{silence}
 \usepackage{multirow}
+\usepackage{upquote}
 \WarningFilter{latex}{Text page 2 contains only floats}
  
 %\VignetteIndexEntry{Downscaling}
@@ -40,11 +41,36 @@ set.seed(0)
 \newpage
 \section{Introduction to downscaling}
 
-In order to assess and manage the status of a species we need to know the abundance of individuals in the population(s) and their changes over time. For the vast majority of species this information is unobtainable, however one important proxy of true abundance and extinction risk is the area occupied by the species. For example, the area of occupancy (AOO) is a little-used measure of conservation status in the IUCN red list (IUCN 2014). Although easier to estimate than true abundance, the difficulty in estimating AOO lies in the extensive sampling required across the full range of the species at a grain size sufficiently fine to give meaningful estimates (and this grain size may vary with taxon, habitat or region). For the majority of species this is still impractical or unfeasible at these grain sizes. However, as we estimate occupancy at increasing grain sizes we increase our confidence in our presence-absence predictions. Such coarse-grain atlas data, generally generated from opportunistic recording over extended periods of time, are much more widely available. However, at such coarse grain sizes we also lose resolution in our status estimates as occupancy rates at large grain sizes are less closely correlated with true abundance (Hartley and Kunin 2003).
+In order to assess and manage the status of a species we need to know the abundance of individuals in the population(s) and their changes over time. For the vast majority of species this information is unobtainable, however one important proxy of true abundance and extinction risk is the area occupied by the species. For example, the area of occupancy (AOO) is a little-used measure of conservation status in the IUCN red list (IUCN 2014). Although easier to estimate than true abundance, the difficulty in estimating AOO lies in the extensive sampling required across the full range of the species at a grain size sufficiently fine to give meaningful estimates. For the majority of species this is still impractical or unfeasible at these grain sizes leaving a large number of unsampled cells and therefore false absences. However, as we estimate occupancy at increasing grain sizes we increase our confidence in our presence-absence predictions. Such coarse-grain atlas data, generally generated from opportunistic recording over extended periods of time, are much more widely available. However, at such coarse grain sizes we also lose resolution in our status estimates as occupancies at large grain sizes are less closely correlated with true abundance (Hartley and Kunin 2003).
 
-A solution is to employ the occupancy-area relationship (OAR); the increase in the  area occupied by a species as grain size increases (Kunin 1998). If the relationship can be described at these coarser grain sizes where confidence is high, then we can extrapolate to predict occupancy at the fine grain sizes necessary for conservation assessments that are more closely related to the true abundance, distribution and conservation status.
+A solution is to employ the occupancy-area relationship (OAR); the increase in the  area occupied by a species as grain size increases (Kunin 1998). If the relationship can be described at these coarser grain sizes where confidence is high, then we can extrapolate to predict occupancy at the fine grain sizes more closely related to the true abundance and conservation status.
 
-Many models have been proposed to describe this geometric relationship, and it appears that no one model consistently provides the best predictions (Azaele et al. 2012, Barwell et al. 2014). This package provides functions for ten commonly applied models, along with functions for preparing coarse-scale data, plotting results, and an ensemble method for running multiple models and averaging their predictions.
+Many models have been proposed to describe this geometric relationship, and it appears that no one model consistently provides the best predictions (Azaele et al. 2012, Barwell et al. 2014). This package provides functions for ten commonly applied model: Nachman, power law, logistic, poisson, negative binomial, generalised negative binomial, improved negative binomial, finite negative binomial, Thomas and Hui models. The Hui model (Hui et al. 2006, 2009) is unique in that it only requires data from a single spatial scale but does require the spatial relationships (i.e. cell coordinates) of all cells. The other nine models require the occupancies at multiple grain sizes. The package then attempts to optimise the model parameters to fit the occupancy data in log-log space. Once each model is parameterised the relationships are extrapolated to estimate occupancy at finer grain sizes.
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width=14.5cm]{Original_upgrain.png}
+\caption{\textbf{``Upraining" of atlas data at a 10km cell width to 20km, 40km and 80 km. As the grain size is increased occupancy also increases.}}
+\label{fig:Original_upgrain}
+\end{figure}
+
+As well as the fitting, prediction and plotting of the downscaling models, the package also contains functions for preparing coarse-scale data (``upgraining"; fig. \ref{fig:Original_upgrain}). The tutorial vignette ``Upgraining atlas data for downscaling: threshold
+selection using \texttt{upgrain.threshold}"  provides an overview of the different methods for achieving this.
+
+\begin{Schunk}
+\begin{Sinput}
+vignette("Upgraining", package = "downscale")
+\end{Sinput}
+\end{Schunk}
+
+For downscaling it is important to check the data for the scale of saturation and endemism. The scale of saturation is the grain size where all cells are occupied (fig. \ref{fig:Saturation}a) i.e. the proportion of occupancy = 1. The scale of endemism is the grain size where all presences occur in a single cell (\ref{fig:Saturation}b). All data above these grain sizes should be discarded as they provide no further information for modelling the occupancy-area curve. The downscale functions will automatically set these occupancies to NA for modelling purposes, but this may lead to insufficient scales (less than three) remaining for modelling.
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width=12.5cm]{Saturation.png}
+\caption{\textbf{Occupancy-area relationships (OAR) for two species showing a) the scale of saturation (the grain size at which all cells are occupied) and b) the scale of endemism (the scale at which only one cell is occupied).}}
+\label{fig:Saturation}
+\end{figure}
 
 \newpage
 \section{Using the downscale package}
@@ -53,8 +79,8 @@ The general flow of the \texttt{downscale} package is presented in fig. \ref{fig
 
 The user may input three types of data:
 \begin{enumerate} \itemsep1pt \parskip0pt 
-\item [1)] A data frame of grain sizes (cell area) and occupancies in that order;
-\item [2)] A data frame of cell coordinates and presence-absence data (presence = 1; absence = 0). Column names must be “lon”, “lat”, and “presence” in that order;
+\item [1)] A data frame with columns for grain sizes (cell area) and occupancies in that order;
+\item [2)] A data frame of cell coordinates and presence-absence data (presence = 1; absence = 0). Column names must be ``lon”, ``lat”, and ``presence” in that order;
 \item [3)] A raster layer of presence-absence data (presence = 1; absence = 0; no data = NA).
 \end{enumerate}
 
@@ -101,15 +127,6 @@ absence data                    &	(with or without Hui model)& $\texttt{ensemble
 \end{tabular}
 \end{table}
 
-For downscale modelling it is important to check the data for the scale of saturation and endemism. The scale of saturation is the grain size where all cells are occupied (fig. \ref{fig:Saturation}a) ie the proportion of occupancy = 1. The scale of endemism is the grain size where all presences occur in a single cell (\ref{fig:Saturation}b). All data above these grain sizes should be discarded as they provide no further information for modelling the occupancy-area curve. The downscale functions will automatically set these occupancies to NA for modelling purposes, but this may lead to insufficient scales remaining for modelling (occupancies for at least three grain sizes are required).
-
-\begin{figure}[!h]
-\centering
-\includegraphics[width=12.5cm]{Saturation.png}
-\caption{\textbf{Occupancy-area relationships (OAR) for two species showing a) the scale of saturation (the grain size at which all cells are occupied) and b) the scale of endemism (the scale at which only one cell is occupied).}}
-\label{fig:Saturation}
-\end{figure}
-
 \newpage
 \section{Package tutorial}
 
@@ -130,7 +147,7 @@ library("downscale")
 \end{Schunk}
 
 \subsection{A quick example}
-We will start with the simplest example of using the downscaling package, where we already have occupancy data across a number of grain sizes. We first create some dummy data; a data frame where the first column are the cell areas (grain size) and the proportion of occupancy as the second column:
+We will start with the simplest example of using the downscaling package, where we already have occupancy data across a number of grain sizes. We first create some imaginary data; a data frame where the first column are the cell areas (grain size) and the proportion of occupancy as the second column:
 
 \begin{Schunk}
 \begin{Sinput}
@@ -139,7 +156,7 @@ occupancy <- data.frame(Cell.area = c(100, 400, 1600, 6400),
 \end{Sinput}
 \end{Schunk}
 
-Now we use downscale to estimate the model parameters for the logistic model to the data. Note: for this type of data input we must also specify the extent (the total area over which occupancy has been measured) which is necessary for converting the modelled proportion of occupancies to area of occupancy (AOO) later on. In this dummy data we will set extent to be 320000 km$^2$:
+Now we use downscale to estimate the model parameters for the logistic model to the data. Note: for this type of data input we must also specify the extent (the total area over which occupancy has been measured) which is necessary for converting the modelled proportion of occupancies to area of occupancy (AOO) later on. In this imaginary data we will set extent to be 320000 km$^2$:
 
 \begin{Schunk}
 \begin{Sinput}
@@ -148,7 +165,7 @@ logis.mod <- downscale(occupancies = occupancy,
                        model = "Logis",
                        extent = 320000)
                        
-## this creates an object of class ‘downscale’
+## this creates an object of class 'downscale'
 logis.mod
 \end{Sinput}
 \begin{Soutput}
@@ -175,7 +192,7 @@ attr(,"class")
 \end{Soutput}
 \end{Schunk}
 
-The downscale function has estimated best-fit parameters of 0.00201 for \texttt{C} and 1.0837 for \texttt{z} for the logistic model. We then take these parameters from the \texttt{‘downscale’} object to extrapolate the fitted logistic function to predict occupancies at finer grain sizes. We will first create a vector of grain sizes (cell area) to predict. If we include the original cell sizes used for modelling we can also observe the model fit.
+The downscale function has estimated best-fit parameters of 0.00201 for \texttt{C} and 1.0837 for \texttt{z} for the logistic model. We then take these parameters from the \textquotesingle \texttt{downscale}\textquotesingle\ object to extrapolate the fitted logistic function to predict occupancies at finer grain sizes. We will first create a vector of grain sizes (cell area) to predict. If we include the original cell sizes used for modelling we can also observe the model fit.
 
 \begin{Schunk}
 \begin{Sinput}
@@ -215,7 +232,7 @@ plot(logis.pred)
 }
 
 \subsection{Preparing atlas data for downscaling}
-For the majority of cases we will have atlas data. For downscaling we will need to therefore upgrain the atlas data. Read in the atlas data for a hypothetical UK species provided in the package. In this case the format is a data frame of sample cell coordinates and presence-absence data:
+For the majority of cases we will have atlas data at a single scale. For downscaling we will need to therefore upgrain the atlas data. Read in the atlas data for a hypothetical UK species provided in the package. In this case the format is a data frame of sample cell coordinates and presence-absence data but it could also be a raster layer:
 
 \begin{Schunk}
 \begin{Sinput}
@@ -243,42 +260,39 @@ head(atlas.data)
 \end{Soutput}
 \end{Schunk}
 
-The first step is to upgrain the atlas data to calculate occupancy at larger grain sizes than the atlas data – this provides the occupancy data points to fit the different downscaling models to. If we simply increase the cell sizes of the atlas data then the extent also increases. As downscaling models requires the proportion of occupancy at each grain, if the proportions are calculated from a different total area in each case we may run in to problems. Therefore it is important that we fix the extent of all grain sizes to the extent of the largest grain size, but this means compromising between assigning unsampled cells as absences or excluding sampled cells.
+The first step is to upgrain the atlas data to calculate occupancy at larger grain sizes than the atlas data – this provides the occupancy data points to fit the different downscaling models to. If we simply increase the cell sizes of the atlas data then the extent also increases. As downscaling models requires the proportion of occupancy at each grain, if the proportions are calculated from a different total area in each case we may run in to problems. Therefore it is important that we fix the extent of all grain sizes to the extent of the largest grain size, but this means compromising between assigning unsampled cells as absences or excluding sampled cells. We therefore carry this out by applying a threshold to the proportion of a coarse-scale cell that has been sampled at the fine-scale. For example, if a 40km width cell was only sampled by a single 10km atlas absence cell within it, we may want to discard it as a) it is likely that at least one of the unsampled cells may actually be a presence (coarse-scale false absence), and b) all the unsampled atlas cells would be assigned as absences even though they have not been sampled (atlas-scale false absence). However, discarding the cell will also lead to some loss of information.
 
-It is highly recommended to read the vignette “Upgraining atlas data for downscaling: threshold selection using upgrain.threshold” for more detail on creating your multi-scale standardised atlas data, as well as the help file for the \texttt{upgrain.threshold} function:
+The choice of threshold can have important consequences on the model predictions and so it is highly recommended to read the vignette “Upgraining atlas data for downscaling: threshold selection using \texttt{upgrain.threshold}” and the function helpfile (\texttt{?upgrain.threshold}) for more detail on creating your multi-scale standardised atlas data:
 
 \begin{Schunk}
 \begin{Sinput}
 vignette("Upgraining", package = "downscale")
-?upgrain.threshold
 \end{Sinput}
 \end{Schunk}
 
-The \texttt{upgrain.threshold} allows the user to explore these trade-offs through several plots, and also provides four recommendations for possible threshold selections: including all sampled cells; including only cells at the largest grain size that were completely sampled at the atlas scale; a species-specific threshold that retains all species occurrences; and an atlas-specific threshold that maintains the same extent as the original atlas data. As the input data is a data frame we must tell the function the cell width (10 km$^2$) and the number of scales we wish to upgrain (we want three additional scales for modelling):
+The \texttt{upgrain.threshold} allows the user to explore these trade-offs through several plots, and provides four recommendations for possible threshold selections: including all the sampled cells (\texttt{All\_Sampled}); including only cells at the largest grain size that were completely sampled at the atlas scale (\texttt{Sampled\_Only}); a species-specific threshold that retains all species occurrences (\texttt{All\_Occurrences}); and an atlas-specific threshold that maintains the same extent as the original atlas data (\texttt{Gain\_Equals\_Loss}).
 
 \begin{Schunk}
 \begin{Sinput}
 ## explore thresholds using upgrain.threshold
 thresh <- upgrain.threshold(atlas.data = atlas.data,
                             cell.width = 10,
-                            scales = 3,
-                            thresholds = seq(0, 1, 0.01))
+                            scales = 3)
 \end{Sinput}
 \end{Schunk}
 
-This gives two sets of plots. The first are a set of four plots that explore the trade-offs between discarding sampled cells and making assumptions about unsampled cells, which are automatically assigned as absences.
+This gives two sets of plots. First is a set of four plots that explore the trade-offs between discarding sampled cells and making assumptions about unsampled cells, which are automatically assigned as absences.
 
-\newpage
 \begin{figure}[!h]
 \centering
-\includegraphics[width=12.5cm]{Threshold_plots.png}
+\includegraphics[width=12cm]{Threshold_plots.png}
 \end{figure}
 
-The second set of plots (hit \texttt{return} or click on the plot window to view the second window) are the standardised atlas data generated after applying the four different threshold criteria ("All Sampled",  "All Occurrences",  "Gain Equals Loss" and "Sampled Only").
+The second set of plots (hit \texttt{return} or click on the plot window to view the second window) are the standardised atlas data generated after applying the four different threshold criteria (\texttt{"All\_Sampled"},  \texttt{"All\_Occurrences"},  \texttt{"Gain\_Equals\_Loss"} and \texttt{"Sampled\_Only"}).
 
 \begin{figure}[!h]
 \centering
-\includegraphics[width=12cm]{Threshold_maps.png}
+\includegraphics[width=10.5cm]{Threshold_maps.png}
 \end{figure}
 
 We can see the threshold values for the four threshold criteria
@@ -293,7 +307,7 @@ thresh$Thresholds
 \end{Soutput}
 \end{Schunk}
 
-Once the user has decided on a threshold value (any value between 0 and 1 can be selected) or one of the threshold criteria, the \texttt{upgrain} function will prepare the atlas data for downscaling. For now we’ll use one of the pre-defined options “All\_Occurrences” which ensures that all occurrence records are retained. This creates an object of class \texttt{‘upgrain’} which can then then be used directly as an input for \texttt{downscale}, along with plots of the original and standardised atlas data at each scale.
+Once the user has decided on a threshold value (any value between 0 and 1 can be selected) or one of the threshold criteria, the \texttt{upgrain} function will prepare the atlas data for downscaling. For now we’ll use one of the pre-defined options \texttt{"All\_Occurrences"} which ensures that all occurrence records are retained. This creates an object of class \textquotesingle \texttt{upgrain}\textquotesingle\ which can then then be used directly as an input for \texttt{downscale}, along with plots of the original and standardised atlas data at each scale. We will save the \textquotesingle \texttt{upgrain}\textquotesingle\ object here for subsequent analyses in the next section.
 
 \begin{Schunk}
 \begin{Sinput}
@@ -312,7 +326,7 @@ occupancy <- upgrain(atlas.data,
 
 \subsection{Downscaling the atlas data - more detailed examples}
 
-As we can pass our \texttt{‘upgrain’} directly in to \texttt{‘downscale’} we no longer require to specify the extent. Let’s try the improved negative binomial model (INB) first:
+As we can pass our \textquotesingle \texttt{upgrain}\textquotesingle\ object directly in to the \texttt{downscale} function we no longer require to specify the extent. Let’s try the improved negative binomial model (INB) first:
 
 \begin{Schunk}
 \begin{Sinput}
@@ -396,7 +410,7 @@ inb.pred.new <- predict(inb.new,
 \end{figure}
 
 
-The Thomas model involves an integration process that can be time-consuming to run. For this reason the user may alter the tolerance during integration – the finer the tolerance the more accurate the prediction but the longer the computation time. It can therefore be a good idea to initially try a larger tolerance value than the default ($1e^{-6}$) in order to ascertain if the starting parameters are likely to be correct. You can then always then use the parameter esimates as the starting parameters when using a smaller tolerance value.
+The Thomas model involves an integration process that can be time-consuming to run. For this reason the user may alter the tolerance during integration – the finer the tolerance the more accurate the prediction but the longer the computation time. It can therefore be a good idea to initially try a larger tolerance value than the default ($1e^{-6}$) in order to ascertain if the starting parameters are likely to be correct. You can then always use the parameter estimates as the starting parameters when using a smaller tolerance value.
 
 \begin{Schunk}
 \begin{Sinput}
@@ -424,7 +438,7 @@ plot(thomas.pred,
 
 The Hui model is slightly different from the other downscaling models in that it does not need occupancy from multiple scales. Instead, it only takes the coordinates of presence-absence data at the atlas scale and uses this to calculate occupancy at finer grain sizes. For this reason it is implemented using a seperate function, \texttt{hui.downscale}, which in effect runs \texttt{downscale} and \texttt{predict.downscale} in a single step. 
 
-The input data must either be a presence-absence raster layer of the atlas data, or a data frame of cell coordinates and presence-absence data. Additionally the function requires the cell widths of the input data, if using a data frame as the input data, the total extent, and the grain sizes (cell area) for which we wish to predict occupancy. These must be smaller than the cell area of the input data. Like the Thomas model, the tolerance can be specified if the results appear inaccurate (set tolerance to a smaller number) or takes extensive programming time (set tolerance to a larger number).
+The input data must either be a presence-absence raster layer of the atlas data, or a data frame of cell coordinates and presence-absence data. Additionally the function requires the cell widths of the input data, and if using a data frame as the input data, the total extent, and the grain sizes (cell area) for which we wish to predict occupancy. These must be smaller than the cell area of the input data. Like the Thomas model, the tolerance can be specified if the results appear inaccurate (set tolerance to a smaller number) or takes extensive programming time (set tolerance to a larger number).
 
 \begin{Schunk}
 \begin{Sinput}
@@ -440,7 +454,6 @@ plot(hui)
 ## Or we can use the 'upgrain' object as input
 hui <- hui.downscale(occupancy,
                      cell.width = 10,
-                     extent = 320000,
                      new.areas = c(1, 2, 5, 15, 50),
                      plot = TRUE)
 \end{Sinput}
@@ -451,7 +464,7 @@ hui <- hui.downscale(occupancy,
 \includegraphics[width=7cm]{Downscaling-downscale19}
 \end{figure}
 
-It is critical to note here that the proportion of occupancies are very different between the two plots. This is because the extents are different between the original atlas data 320000 km$^2$ and the standardised atlas data 364800 km$^2$. If comparing predictions using multiple models it is crucial to use the same standardised data in all cases, or else only compare the converted area of occupancies (AOO), not proportion of occupancies.
+It is critical to note here that the proportion of occupancies are very different between the two plots. This is because the extents are different between the original atlas data 320000 km$^2$ and the standardised atlas data 364800 km$^2$. If comparing predictions using multiple models it is crucial to use the same standardised data in all cases, or else only compare the converted area of occupancies (AOO) and not the proportion of occupancies.
 
 \subsection{Ensemble modelling}
 No single model appears to provide the most accurate fine-scale occupancy predictions in all cases, and it is difficult to predict which model will in a given situation. The ensemble function will model and predict occupancy for multiple models simultaneously, and also applies a simple model averaged prediction (the means of the log occupancies). Some or all of the models can be selected. Again, lets start where our data is a data frame of occupancies at each grain size:
@@ -497,7 +510,7 @@ FNB model is running...  complete
 
 \begin{Schunk}
 \begin{Sinput}
-## the model averaged predictions are in grey
+## the model averaged predictions are in grey and the model predictions in red
 ## to print the predicted proportion of occupancies for each model
 ensemble$Occupancy
 \end{Sinput}
@@ -676,49 +689,50 @@ Hui model is running...  complete
 
 It may be that instead of having pre-existing atlas data, we may need to create our own coarse-scale data from point records (for example herbarium records or GBIF data).
 
-The grain size (cell width) needs to be carefully chosen so that we can best meet the assumption that all cells have been sampled. The larger the grain size the greater our confidence in each cell's status, but the further we will have to downscale and the fewer coarse-grain data points we will have for model fitting. If there are cells or regions where we do not expect this to be the case it may be best to change these to NA’s rather than assign them as absences.
+The grain size (cell width) needs to be carefully chosen so that we can best meet the assumption that all cells have been sampled. The larger the grain size the greater our confidence in each cell's status, but the further we will have to downscale and the fewer coarse-grain data points we will have for model fitting. If there are cells or regions where we do not expect this to be the case it may be best to change these to NAs rather than assign them as absences.
 
-The libraries \texttt{spocc} and \texttt{spoccutils} will automatically harvest GBIF data for a desired species for a specified region.
+The library \texttt{rgbif} will automatically harvest GBIF data for a desired species for a specified region.
 
 \begin{Schunk}
 \begin{Sinput}
 ## if you need to, install the packages
-install.packages("spocc")
-install.packages("spoccutils")
+install.packages("rgbif")
 
 ## load in the necessary libraries
-library(spoccutils)
-library(spocc)
+library(rgbif)
 library(downscale)
 \end{Sinput}
 \end{Schunk}
 
-We’ll get the UK records for the 
-pearl-bordered fritillary (\emph{Boloria euphrosyne}), a butterfly species with a patchy breeding distribution in the west of the UK. We confine ourselves to only UK records (\texttt{gbifopts = list(country = "GB")}) and limit ourselves to downloading no more than 10000 total records (\texttt{imit = 10000}).
+We’ll get the UK records for the chalkhill blue (\emph{Polyommatus coridon}), a butterfly species with a patchy breeding distribution largely in the south of the UK. We will confine ourselves to records only from the UK (\texttt{gbifopts = list(country = "GB")}).
 
 \begin{Schunk}
 \begin{Sinput}
-records <- occ(query = "Boloria euphrosyne",
-               from = "gbif",
-               limit = 10000,
-               gbifopts = list(country = "GB"))
+records <- occ_search(scientificName = "Polyommatus coridon",
+                      country = "GB",
+                      limit = 10000,
+                      hasCoordinate = TRUE,
+                      return = "data")
                
 ## extract just the coordinates of the occurrences
-records <- occ2sp(records,
-                  "+proj=longlat +datum=WGS84",
-                  just_coords = TRUE)
+records.coords <- SpatialPoints(data.frame(Lon = records$decimalLongitude,
+                                           Lat = records$decimalLatitude), 
+                                proj4string = CRS("+proj=longlat +datum=WGS84
+                                                   +ellps=WGS84"))
 \end{Sinput}
 \end{Schunk}
 
-The coordinates are in latitude/longitude based upon the WGS84 coordinate system. A lot of the point records are collected based upon the British National Grid ("OSGB 36"), so it makes sense to reproject the points to this coordinate system. As an added advantage we can also specify the units as km to make our upgraining easier.
+The coordinates are in latitude/longitude based upon the WGS84 coordinate system. However, a lot of the point records for UK butterflies are collected based upon the British National Grid ("OSGB 36"), which can be seen in the grid-like pattern of some of the points so it makes sense to reproject the points to this coordinate system. As an added advantage we can also specify the units as km to make our upgraining easier.
 
 \begin{Schunk}
 \begin{Sinput}
 ## reproject the coordinates to British National Grid
-records <- spTransform(records,
-                       CRS("+proj=lcc +lat_1=49.8333339 +lat_2=51.16666733333333
-                           +lat_0=90 +lon_0=4.367486666666666 +x_0=150000.01256 
-                           +y_0=5400088.4378 +ellps=intl +units=km +no_defs"))
+records.coords <- spTransform(records.coords,
+                              CRS("+proj=lcc 
+                                   +lat_1=49.8333339 +lat_2=51.16666733333333
+                                   +lat_0=90 +lon_0=4.367486666666666 
+                                   +x_0=150000.01256 +y_0=5400088.4378 
+                                   +ellps=intl +units=km +no_defs"))
 \end{Sinput}
 \end{Schunk}
 
@@ -726,8 +740,7 @@ We can have a quick look at the point records if we like.
 
 \begin{Schunk}
 \begin{Sinput}
-records.coords <- records@coords
-plot(records.coords, asp = 1)
+plot(records.coords, axes = T)
 \end{Sinput}
 \end{Schunk}
 
@@ -737,22 +750,26 @@ plot(records.coords, asp = 1)
 \end{figure}
 
 \newpage
-Now we have to convert these points in to a coarse-scale raster. The simplest method is to bound our raster by the limits of the location coordinates. Careful thought must also be put in to the grain size. It must be large enough that we are confident it is an accurate representation of presence-absence, but also small enough to allow upgraining to give at least three spatial scales worth of occupancy data. In the UK butterflies are generally sampled at a 10 km grid cell,so we'll set a grain size of 20 km width (400 km$^2$), which gives us a little mode certainty in our atlas data but will still comfortably allow us to upgrain to give three scales (400, 1600, 6400 km$^2$).
+Now we have to convert these points in to a coarse-scale raster. The simplest method is to bound our raster by the limits of the location coordinates. Careful thought must also be put in to the grain size. It must be large enough that we are confident it is an accurate representation of presence-absence, but also small enough to allow upgraining to give at least three spatial scales worth of occupancy data for fitting the downscaling models. In the UK butterflies are generally sampled at a 10 km grid cell, so we'll set a grain size of 20 km width (400 km$^2$), which gives us a little more certainty in our atlas data but will still comfortably allow us to upgrain to give three scales (400, 1600, 6400 km$^2$).
 
 \begin{Schunk}
 \begin{Sinput}
-# set grain size as 20 km
+## set grain size as 20 km
 cell.width <- 20
 
-## create a blank raster to fit the coordinates
-gbif_raster <- raster(xmn = min(records.coords[, "longitude"] - cell.width / 2),
-                      xmx = max(records.coords[, "longitude"] + cell.width / 2),
-                      ymn = min(records.coords[, "latitude"] - cell.width / 2),
-                      ymx = max(records.coords[, "latitude"] + cell.width / 2),
+# extract extent of coordinates
+coords.extent <- extent(records.coords)
+
+## create a blank raster to fit the coordinates (note the addition of half a 
+## cell width on all sides)
+gbif_raster <- raster(xmn = coords.extent@xmin - (cell.width / 2),
+                      xmx = coords.extent@xmax + (cell.width / 2),
+                      ymn = coords.extent@ymin - (cell.width / 2),
+                      ymx = coords.extent@ymax + (cell.width / 2),
                       res = cell.width)
                       
 ## assign cells with presence records as 1
-gbif_raster <- rasterize(records, gbif_raster, field = 1)
+gbif_raster <- rasterize(records.coords, gbif_raster, field = 1)
 
 ## convert cells with NA (no records) to 0
 gbif_raster[is.na(gbif_raster)] <- 0
@@ -784,7 +801,7 @@ We can see there has not been much increase in extent after upgraining:
 occupancy$occupancy.orig[1, 2]
 \end{Sinput}
 \begin{Soutput}
-[1] 147200
+[1] 163200
 
 \end{Soutput}
 \begin{Sinput}
@@ -792,7 +809,7 @@ occupancy$occupancy.orig[1, 2]
 occupancy$extent.stand
 \end{Sinput}
 \begin{Soutput}
-[1] 153600
+[1] 192000
 
 \end{Soutput}
 \end{Schunk}
@@ -873,12 +890,12 @@ ensemble$AOO[, c("Cell.area", "Means")]
 
 \begin{Soutput}
   Cell.area       Means
-1         1    761.4534
-2        10   4037.9311
-3       100  20763.4287
-4       400  51077.5494
-5      1600 108456.2328
-6      6400 183822.1933
+1         1    617.8954
+2        10   2966.7477
+3       100  13958.6322
+4       400  32781.6381
+5      1600  68197.5079
+6      6400 117253.2752
 \end{Soutput}
 \end{Schunk}
 
@@ -902,7 +919,7 @@ uk <- spTransform(uk,
 
 ## plot our GBIF records on top of the UK polygon
 plot(uk)
-plot(records, add = TRUE, col = "red)
+plot(records.coords, add = TRUE, col = "red)
 \end{Sinput}
 \end{Schunk}
 
@@ -921,7 +938,7 @@ gbif_raster <- raster(ext = extent(uk),
                       res = cell.width)
 
 ## assign cells with presence records as 1
-gbif_raster <- rasterize(records, gbif_raster, field = 1)
+gbif_raster <- rasterize(records.coords, gbif_raster, field = 1)
 
 ## convert cells with NA (no records) to 0
 gbif_raster[is.na(gbif_raster)] <- 0
@@ -1002,7 +1019,7 @@ ensemble$AOO[, c("Cell.area", "Means")]
 \includegraphics[width=\linewidth]{Downscaling-downscale42}
 \end{figure}
 
-If we want to compare predicted occupancy between the two methods we must compare the converted area of occupancies (AOO), not the proportion of occupancies as these are calculated from different extents. In this case the estimates for grain sizes of 1 km and 10 km from the bounded rectangle (AOO = 761 km$^2$ and 4038 km$^2$) are quite a bit larger than the estimates using the full mainland UK (AOO = 665 km$^2$ and 3354 km$^2$), most likely as a lot of cells in the atlas generated by the bounded rectangle would actually be sea. This highlights the care that is needed in selecting the bounding extent, the method and number of scales to upgrain, and the grain size we wish to predict occupancy for.
+If we want to compare predicted occupancy between the two methods we must compare the converted area of occupancies (AOO), not the proportion of occupancies as these are calculated from different extents. In this case the estimates for grain sizes of 1 km and 10 km from the bounded rectangle (AOO = 618 km$^2$ and 2967 km$^2$) are quite a bit larger than the estimates using the full mainland UK (AOO = 556 km$^2$ and 2635 km$^2$), most likely as a lot of cells in the atlas generated by the bounded rectangle would actually be sea. This highlights the care that is needed in selecting the bounding extent, the method and number of scales to upgrain, and the grain size we wish to predict occupancy for.
 
 \section{Bibliography}
 

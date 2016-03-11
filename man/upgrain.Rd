@@ -3,7 +3,7 @@
 \title{Upgraining of atlas data to larger grain sizes}
 \usage{
 upgrain(atlas.data, cell.width = NULL, scales, threshold = NULL,
-        method = "Gain_Equals_Loss", plot = TRUE)
+        method = "Gain_Equals_Loss", plot = TRUE, return.rasters = FALSE)
 }
 \arguments{
 \item{atlas.data}{either a raster file of presence-absence atlas data or a
@@ -21,6 +21,8 @@ If data is a raster then leave as default (\code{= NULL})}
 \item{method}{one of \code{"All_Sampled"}, \code{"All_Occurrences"}, \code{"Gain_Equals_Loss"} or \code{"Sampled_Only"} (default = \code{"Gain_Equals_Loss"}). If the user wishes to define their own \code{threshold} then method must equal \code{NULL}. See \code{details} and \code{\link{upgrain.threshold}} for descriptions of the different methods.}
 
 \item{plot}{default = \code{TRUE}. Plots the original atlas data alongside the standardised atlas data at each grain size.}
+
+\item{return.rasters}{default = \code{FALSE}. If \code{TRUE} returns the extent-standardised atlas data upgrained to all grain sizes (NOTE: the extent-standardised atlas data at the original grain size is always returned regardless).}
 }
 
 \value{
@@ -44,6 +46,7 @@ Returns a list of class \code{"upgrain"} that can be used as a direct input to \
      }
 }
 \item{atlas.raster.stand}{A raster layer of the extent-standardised atlas data}
+\item{scaled.rasters}{If \code{return.rasters = TRUE}. A list containing the extent-standardised atlas data upgrained to all grain sizes}
 }
 \description{
 Takes presence-absence atlas data and aggregates data to larger grain sizes, returning occupancy at each grain size for use in  \code{\link{downscale}} modelling. Atlas data may be in the form of raster data or as a data frame with presence-absence information and cell coordinates.

@@ -1,8 +1,11 @@
 ################################################################################
 # 
 # OptimiseParametersFNB.R
-# Version 1.0
-# 28/01/2015
+# Version 1.1
+# 18/08/2016
+#
+# Updates:
+#   18/08/2016: names of starting parameters harmonised with paper
 #
 # Optimisation procedure of finding parameters that best fit observed data for
 # the Finite Negative Binomial model
@@ -40,8 +43,8 @@ OptimiseParametersFNB <- function(area,
                                      area = area,
                                      extent = extent,
                                      observed = log(observed),
-                                     lower = c("W" = -Inf, "k" = 0),
-                                     upper = c("W" = Inf, 
+                                     lower = c("N" = -Inf, "k" = 0),
+                                     upper = c("N" = Inf, 
                                                "k" = min(area, na.rm = TRUE) * 
                                                  100),
                                      control = minpack.lm::nls.lm.control(

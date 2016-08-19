@@ -3,7 +3,7 @@
 \title{Upgraining of atlas data to larger grain sizes}
 \usage{
 upgrain(atlas.data, cell.width = NULL, scales, threshold = NULL,
-        method = "Gain_Equals_Loss", plot = TRUE, return.rasters = FALSE)
+        method = "All_Sampled", plot = TRUE, return.rasters = FALSE)
 }
 \arguments{
 \item{atlas.data}{either a raster file of presence-absence atlas data or a
@@ -18,7 +18,7 @@ If data is a raster then leave as default (\code{= NULL})}
 
 \item{threshold}{default = \code{NULL}. A user defined threshold for the proportion of unsampled atlas cells allowed within a cell at the largest grain size. Note: if a \code{method} is selected then threshold must be \code{NULL}.}
 
-\item{method}{one of \code{"All_Sampled"}, \code{"All_Occurrences"}, \code{"Gain_Equals_Loss"} or \code{"Sampled_Only"} (default = \code{"Gain_Equals_Loss"}). If the user wishes to define their own \code{threshold} then method must equal \code{NULL}. See \code{details} and \code{\link{upgrain.threshold}} for descriptions of the different methods.}
+\item{method}{one of \code{"All_Sampled"}, \code{"All_Occurrences"}, \code{"Gain_Equals_Loss"} or \code{"Sampled_Only"} (default = \code{"All_Sampled"}). If the user wishes to define their own \code{threshold} then method must equal \code{NULL}. See \code{details} and \code{\link{upgrain.threshold}} for descriptions of the different methods.}
 
 \item{plot}{default = \code{TRUE}. Plots the original atlas data alongside the standardised atlas data at each grain size.}
 

@@ -53,19 +53,19 @@ Nine downscaling models are available. \code{area} is the grain size (cell area)
    \code{"Logis"} \tab  \tab  Logistic model \tab
      \emph{log((C * (area ^ z)) / (1 + (C * (area ^ z))))}\cr
    \code{"Poisson"} \tab  \tab  Poisson model \tab
-     \emph{log(1 - (exp(-lambda * area)))}\cr
+     \emph{log(1 - (exp(-gamma * area)))}\cr
    \code{"NB"} \tab  \tab  Negative binomial model \tab
-     \emph{log(1 - (1 + (C * area) / k) ^ -k)}\cr
+     \emph{log(1 - (1 + (gamma * area) / k) ^ -k)}\cr
    \code{"GNB"} \tab  \tab  Generalised negative binomial model \tab
      \emph{log(1 - (1 + (C * area ^ z) / k) ^ -k)}\cr
    \code{"INB"} \tab  \tab  Improved negative binomial model \tab
-     \emph{log(1 - ((C * area ^ (b - 1)) ^ ((r * area) /
+     \emph{log(1 - ((C * area ^ (b - 1)) ^ ((gamma * area) /
        (1 - C * area ^ (b - 1)))))}\cr
    \code{"FNB"} \tab  \tab  Finite negative binomial model \tab
      \emph{log(1 -
-       ((gamma(W + ((extent * k) / area) - k) * 
+       ((gamma(N + ((extent * k) / area) - k) * 
        gamma(extent * k) / area) / 
-       (gamma(W + ((extent * k) / area)) * 
+       (gamma(N + ((extent * k) / area)) * 
        gamma(((extent * k) / area) - k)))
        }\cr
    \code{"Thomas"} \tab  \tab  Thomas model \tab see below\cr
@@ -91,11 +91,11 @@ The optimisation procedure requires initial starting values for all model parame
 \code{"Nachman"} \tab \tab \tab C = 0.01; \tab \tab \tab z = 0.01 \tab \tab \tab \cr
 \code{"PL"} \tab \tab \tab C = 0.01; \tab \tab \tab z = 0.01 \tab \tab \tab \cr
 \code{"Logis"} \tab \tab \tab C = 0.01; \tab \tab \tab z = 0.01 \tab \tab \tab \cr
-\code{"Poisson"} \tab \tab \tab lambda = 1e-8 \tab \tab \tab \tab \tab \tab \tab \cr
+\code{"Poisson"} \tab \tab \tab gamma = 1e-8 \tab \tab \tab \tab \tab \tab \tab \cr
 \code{"NB"} \tab \tab \tab C = 0.01; \tab \tab \tab k = 0.01 \tab \tab \tab \cr
 \code{"GNB"} \tab \tab \tab C = 0.00001; \tab \tab \tab z = 1; \tab \tab k = 0.01\cr
-\code{"INB"} \tab \tab \tab C = 1; \tab \tab \tab r = 0.01; \tab \tab b = 0.1\cr
-\code{"FNB"} \tab \tab \tab W = 10; \tab \tab \tab k = 10 \tab \tab \tab \cr
+\code{"INB"} \tab \tab \tab C = 1; \tab \tab \tab gamma = 0.01; \tab \tab b = 0.1\cr
+\code{"FNB"} \tab \tab \tab N = 10; \tab \tab \tab k = 10 \tab \tab \tab \cr
 \code{"Thomas"} \tab \tab \tab rho = 1e-8; \tab \tab \tab mu = 10; \tab \tab sigma = 1\cr
 }
 }
@@ -141,7 +141,7 @@ plot(pred)
                   model = "INB"))
 
 ## Specifying the starting parameters (gives a poorer fit in this case)
-new.params <- list("C" = 0.1, "r" = 0.00001, "b" = 0.1)
+new.params <- list("C" = 0.1, "gamma" = 0.00001, "b" = 0.1)
 (inb.new <- downscale(occupancies = occupancy,
                       model = "INB",
                       starting_params = new.params))

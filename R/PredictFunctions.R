@@ -1,10 +1,11 @@
 ################################################################################
 # 
 # PredictFunctions.R
-# Version 1.2
-# 28/01/2015
+# Version 1.3
+# 18/08/2016
 #
 # Updates:
+#   18/08/2016: names of starting parameters harmonised with paper
 #   30/01/2015: Thomas model added
 #   28/01/2015: Altered gamma function in Finite Negative Binomial model
 #
@@ -70,7 +71,7 @@ PredictPoisson <- function(par, area) {
   # Args:
   #   par: dataframe containing parameter lambda of the Poisson model
   #   area: Grain size (km2) to be predicted
-  AOO <- log(1 - (exp(-par$lambda * area)))
+  AOO <- log(1 - (exp(-par$gamma * area)))
   return(AOO)
 }
 
@@ -83,7 +84,7 @@ PredictNB <- function(par, area) {
   #   par: dataframe containing parameters C and k of the Negative
   #        Binomial model
   #   area: Grain size (km2) to be predicted
-  AOO <- log(1 - (1 + (par$C * area) / par$k) ^ -par$k)
+  AOO <- log(1 - (1 + (par$gamma * area) / par$k) ^ -par$k)
   return(AOO)
 }
 
@@ -110,7 +111,7 @@ PredictINB <- function(par, area) {
   #        Negative Binomial model
   #   area: Grain size (km2) to be predicted
   AOO <- log(1 - ((par$C * area ^ (par$b - 1))^
-                ((par$r * area) / (1 - par$C * area ^ (par$b - 1)))))
+                ((par$gamma * area) / (1 - par$C * area ^ (par$b - 1)))))
   return(AOO)
 }
 
@@ -127,9 +128,9 @@ PredictFNB <- function(par, area, extent){
   #        Negative Binomial model
   #   area: Grain size (km2) to be predicted
   #   extent: Total area (km2)
-  gamma1 <- par$W + ((extent * par$k) / area) - par$k
+  gamma1 <- par$N + ((extent * par$k) / area) - par$k
   gamma2 <- (extent * par$k) / area
-  gamma3 <- par$W + ((extent * par$k) / area)
+  gamma3 <- par$N + ((extent * par$k) / area)
   gamma4 <- ((extent * par$k) / area) - par$k
   AOO <- suppressWarnings(as.numeric(log(1 - (
     (gamma(Rmpfr::mpfr(gamma1, 64)) * gamma(Rmpfr::mpfr(gamma2, 64))) /

@@ -1,5 +1,11 @@
 NEWS for downscale package
 
+Changes for 1.2-2
+---------------
+18/08/2015
+Default upgraining method changed to "All_Sampled"
+Names of parameters harmonised with JSS paper
+
 Changes for 1.2-1
 ---------------
 10/03/2015

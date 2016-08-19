@@ -5,6 +5,7 @@
 # 25/02/2016
 #
 # Updates:
+#   18/08/2016: Change default to "All_Sampled"
 #   25/02/2016: Bug on extent in standardised rasters fixed
 #               Added option to save all rasters
 #               Change the method of assigning raster values to 'setValues'
@@ -34,7 +35,7 @@ upgrain <- function(atlas.data,
                     cell.width = NULL,
                     scales,
                     threshold = NULL,
-                    method = "Gain_Equals_Loss",
+                    method = "All_Sampled",
                     plot = TRUE,
                     return.rasters = FALSE) {
   

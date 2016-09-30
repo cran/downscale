@@ -1,10 +1,11 @@
 ################################################################################
 # 
 # Hui.downscale.R
-# Version 1.1
+# Version 1.2
 # 05/05/2015
 #
 # Updates:
+#   29/09/2016: No need to input cell width in hui.downscale with raster
 #   05/05/2014: calculates AOO
 #               Can use upgrain as an input
 # 
@@ -31,14 +32,14 @@ hui.downscale <- function(atlas.data,
                           tolerance = 1e-6,
                           plot = FALSE) {
   # data input handling
-  cell.area <- cell.width ^ 2
-  
   if(class(atlas.data) == "upgrain") {
     extent <- atlas.data$extent.stand
     species <- raster::rasterToPoints(atlas.data$atlas.raster.stand)
     species <- data.frame(presence = species[, 3],
                           lon = species[, "y"],
                           lat = species[, "x"])
+    cell.width <- raster::res(atlas.data$atlas.raster.stand)[1]
+    cell.area <- cell.width ^ 2
   }
   
   if(class(atlas.data) == "RasterLayer") {
@@ -46,10 +47,13 @@ hui.downscale <- function(atlas.data,
     species <- data.frame(presence = species[, 3],
                           lon = species[, "y"],
                           lat = species[, "x"])
+    cell.width <- raster::res(atlas.data)[1]
+    cell.area <- cell.width ^ 2
   }
   
   if((class(atlas.data) != "RasterLayer") & (class(atlas.data) != "upgrain")) {
     species <- atlas.data
+    cell.area <- cell.width ^ 2
   }
   
   # error checking: if data frame requires extent

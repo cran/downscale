@@ -1,8 +1,8 @@
 Package: downscale
 Type: Package
 Title: Downscaling Species Occupancy
-Version: 1.2-3
-Date: 2016-09-29
+Version: 1.2-4
+Date: 2016-11-24
 Author: Charles Marsh [aut, cre]
 Maintainer: Charles Marsh <charliem2003@gmail.com>
 Description: A set of functions that downscales species occupancy at
@@ -21,7 +21,10 @@ Collate: 'DataInput.R' 'downscale.R' 'OptimiseParameters.R'
         'predict.downscale.R' 'ensemble.downscale.R' 'upgrain.R'
         'hui.downscale.R' 'HuiFunctions.R' 'upgrain.threshold.R'
 RoxygenNote: 5.0.1
-NeedsCompilation: no
-Packaged: 2016-09-29 14:00:04 UTC; Charlie
 Repository: CRAN
-Date/Publication: 2016-09-30 23:26:08
+Repository/R-Forge/Project: downscale
+Repository/R-Forge/Revision: 49
+Repository/R-Forge/DateTimeStamp: 2016-11-24 15:06:52
+Date/Publication: 2016-11-25 08:42:56
+NeedsCompilation: no
+Packaged: 2016-11-24 15:26:47 UTC; rforge

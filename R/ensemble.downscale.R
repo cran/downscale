@@ -5,6 +5,7 @@
 # 13/03/2015
 #
 # Updates:
+#   24/11/2016: Bug fixed with apply in error checking
 #   13/03/2015: if 0's predicted don't plot them
 #   24/02/2015 means calculated as mean of log occupancies
 #   24/02/2015 warning messages for inconsistent results
@@ -49,13 +50,8 @@ ensemble.downscale <- function(occupancies,
                                starting_params = NULL,
                                plot = TRUE,
                                verbose = TRUE) {
+
   ## error checking - model name is correct
-  apply(as.data.frame(models), 1, function(x)
-    if (x %in% c("Nachman", "PL", "Logis", "Poisson", "NB", "GNB", "INB",
-                 "FNB", "Thomas", "Hui", "all") == FALSE) {
-      stop("Model name invalid", call. = FALSE)
-    })
-  
   if (length(models) == 1) {
     if (models == "all") {
       model.list <- c("Nachman","PL","Logis","Poisson","NB",
@@ -64,6 +60,13 @@ ensemble.downscale <- function(occupancies,
     if (models != "all") {
       stop("Only one model selected: ensemble modelling not applicable", 
            call. = FALSE)
+    }
+  }
+  
+  for(m in 1:length(models)) {
+    if(models[m] %in% c("Nachman", "PL", "Logis", "Poisson", "NB", "GNB", 
+                        "INB", "FNB", "Thomas", "Hui", "all") == FALSE) {
+      stop("Model name invalid", call. = FALSE)
     }
   }
   

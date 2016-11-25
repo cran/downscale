@@ -5,6 +5,7 @@
 # 30/01/2015
 #
 # Updates:
+#   24/11/2016: Bug fixed with apply in error checking
 #   13/03/2015: if 0's predicted don't plot them
 #   03/02/2015: plot function added
 #   03/02/2015: output defined as class 'downscale'
@@ -86,7 +87,7 @@ predict.downscale <- function(object,
   }
   
   ### error checking in results
-  if(sum(apply(expected, 1, function(x) is.na(x))[2 ,]) > 0) {
+  if(is.na(sum(expected[, "Occupancy"]))) {
     warning("Predicted results may be innaccurate: one or more NA's predicted.")
   }
   
@@ -94,11 +95,13 @@ predict.downscale <- function(object,
     warning("Predicted results may be innaccurate: one or more 0's predicted.")
   }
   
-  if(sum(apply(expected, 1, function(x) is.na(x))[2 ,], na.rm = TRUE) > 0) {
-    for(i in 1:(length(AOO) - 1)) {
-      if(AOO[i] > AOO[i + 1]) {
-        warning("Scaling is inconsistent: larger occupancies predicted at finer grain sizes.
+  if(!is.na(sum(expected[, "Occupancy"]))) {
+    if(length(AOO) > 1) {
+      for(i in 1:(length(AOO) - 1)) {
+        if(AOO[i] > AOO[i + 1]) {
+          warning("Scaling is inconsistent: larger occupancies predicted at finer grain sizes.
                \nIf model = Thomas try a smaller tolerance value (e.g. 1e-7)")
+        }
       }
     }
   }

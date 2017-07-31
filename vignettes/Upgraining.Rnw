@@ -79,7 +79,7 @@ Therefore there is a clear trade-off between assigning large areas of unsampled 
 library("downscale")
 #  The data may be a raster layer of presence (1) and absence (0) data 
 #  or a data frame of cell centre coordinates and presence-absence data 
-#  in which case it must have these column names: "lon", "lat", "presence"
+#  in which case it must have these column names: "x", "y", "presence"
 data.file <- system.file("extdata", "atlas_data.txt", package = "downscale")
 atlas.data <- read.table(data.file, header = TRUE)
 

@@ -6,11 +6,9 @@ upgrain(atlas.data, cell.width = NULL, scales, threshold = NULL,
         method = "All_Sampled", plot = TRUE, return.rasters = FALSE)
 }
 \arguments{
-\item{atlas.data}{either a raster file of presence-absence atlas data or a
-data frame of sampled cells. If a data frame columns must be in the following order: longitude, latitude, presence-absence.}
+\item{atlas.data}{either a raster file of presence-absence; an object of class SpatialPointsDataFrame atlas data where the data frame contains a single column of presence (1) and absences (0); or a data frame of sampled cells, which must contain columns named 'x', 'y' and 'presence'.}
 
-\item{cell.width}{if data is a data frame, the cell widths of sampled cells.
-If data is a raster then leave as default (\code{= NULL})}
+\item{cell.width}{if data is a data frame or SpatialPointsDataFrame, the cell widths of sampled cells. If data is a raster then leave as default (\code{= NULL})}
 
 \item{scales}{the number of cells to upgrain. Upgraining will happen by
   factors of 2 - ie if scales = 3, the atlas data will be aggregated in 2x2
@@ -83,7 +81,7 @@ The user may input their own threshold or use one of four suggested threshold cr
 data.file <- system.file("extdata", "atlas_data.txt", package = "downscale")
 atlas.data <- read.table(data.file, header = TRUE)
 
-## if the input data is a data frame it must have the columns "lon", "lat"
+## if the input data is a data frame it must have the columns "x", "y"
 ## and "presence"
 head(atlas.data)
 

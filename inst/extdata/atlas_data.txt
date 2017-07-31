@@ -1,4 +1,4 @@
-lon	lat	presence
+x	y	presence
 8170	10	0
 8130	20	0
 8140	20	0

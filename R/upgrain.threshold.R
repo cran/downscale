@@ -1,10 +1,12 @@
 ################################################################################
 #
 # upgrain.threshold.R 
-# Version 1.1
-# 05/10/2015
+# Version 1.2
+# 27/07/2017
 #
 # Updates:
+#   27/07/2017: SpatialPointsDataFrame allowed as input
+#               'lat' and 'lon' as column names replaced by 'x' and 'y'
 #   05/10/2015: Bug on number of scales fixed
 #               'All_Presences' changed to 'All_occurrences'
 #
@@ -21,7 +23,8 @@
 # args:
 #   atlas.data = either a raster file of presence-absence atlas data, or a data 
 #                frame of sampled cells with longitude, latitude and 
-#                presence-absence.
+#                presence-absence; or a SpatialPointsDataFrame with a data 
+#                frame containing 'presence'
 #   cell.width = if data is a data frame, the cell widths of sampled cells.
 #   scales = the number of cells to upgrain. Upgraining will happen by factors 
 #            of 2 - ie if scales = 3, the atlas data will be aggregated in 2x2 
@@ -58,25 +61,35 @@ upgrain.threshold <- function(atlas.data,
     }
   }
   
+  ### Error checking: if SpatialPointsDataFrame needs cell width
+  if(class(atlas.data)[1] == "SpatialPointsDataFrame") {
+    if(is.null(cell.width)) {
+      stop("If data is SpatialPointsDataFrame cell.width is required")
+    }
+  }
+  
   ### data manipulation
   if(is.data.frame(atlas.data) == "TRUE") {
     ### error checking: format of data frame
     if(ncol(atlas.data) != 3) {
-      stop("Input data frame must contain three columns named lon, lat, 
-           presence in that order")
+      stop("Input data frame must contain three columns named 'x', 
+            'y', and 'presence' in that order")
     }
     ### error checking: column names
-    if(sum(names(atlas.data) != c("lon", "lat", "presence")) > 0) {
-      stop("Input data frame must contain three columns named lon, lat, 
-           presence in that order")
+    if(sum(names(atlas.data) != c("x", "y", "presence")) > 0) 
+      {
+      stop("Input data frame must contain three columns named 'x', 
+            'y', and 'presence' in that order")
     }
     
-    longitude <- atlas.data[, "lon"]
-    latitude <- atlas.data[, "lat"]
+    longitude <- atlas.data[, "x"]
+    latitude <- atlas.data[, "y"]
     presence <- atlas.data[, "presence"]
     presence[presence > 0] <- 1
-    shapefile <- sp::SpatialPointsDataFrame(coords = data.frame(lon = longitude,
-                                                                lat = latitude),
+    shapefile <- sp::SpatialPointsDataFrame(coords = data.frame(x = 
+                                                                  longitude,
+                                                                y = 
+                                                                  latitude),
                                             data = data.frame(presence = 
                                                                 presence)) 
     atlas_raster <- raster::raster(ymn = min(latitude) - (cell.width / 2),
@@ -86,6 +99,17 @@ upgrain.threshold <- function(atlas.data,
                                    resolution = cell.width)
     atlas_raster <- raster::rasterize(shapefile, atlas_raster)
     atlas_raster <- raster::dropLayer(atlas_raster, 1)
+  }
+  
+  if(class(atlas.data)[1] == "SpatialPointsDataFrame") {
+    atlas_raster <- raster::raster(ymn = min(latitude) - (cell.width / 2),
+                                   ymx = max(latitude) + (cell.width / 2),
+                                   xmn = min(longitude) - (cell.width / 2), 
+                                   xmx = max(longitude) + (cell.width / 2),
+                                   resolution = cell.width)
+    atlas_raster <- raster::rasterize(shapefile, atlas_raster)
+    atlas_raster <- raster::dropLayer(atlas_raster, 1)
+    atlas_raster@data@values[atlas_raster@data@values > 0] <- 1
   }
   
   if(class(atlas.data) == "RasterLayer") {

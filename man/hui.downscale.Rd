@@ -6,7 +6,7 @@ hui.downscale(atlas.data, cell.width, new.areas, extent = NULL,
               tolerance = 1e-6, plot = FALSE)
 }
 \arguments{
-\item{atlas.data}{either an object of class \code{"upgrain"}; or a raster file where 1 = presence and 0 = absence; or a data frame containing these columns: \code{presence} = presence - absence data; \code{lon} = easting coordinates of cells; \code{lat} = northing coordinates of cells.}
+\item{atlas.data}{either an object of class \code{"upgrain"}; or a raster file where 1 = presence and 0 = absence; or an object of class SpatialPointsDataFrame atlas data where the data frame contains a single column of presence (1) and absences (0); or a data frame containing these columns: \code{presence} = presence - absence data; \code{x} = easting coordinates of cells; \code{y} = northing coordinates of cells.}
 
 \item{cell.width}{the cell width of the atlas data.}
 
@@ -57,7 +57,7 @@ NOTE: if comparing occupancy predictions from the Hui model with those from othe
 data.file <- system.file("extdata", "atlas_data.txt", package = "downscale")
 atlas.data <- read.table(data.file, header = TRUE)
 
-## if the input data is a data frame it must have the columns "lon", "lat"
+## if the input data is a data frame it must have the columns "x", "y"
 ## and "presence"
 head(atlas.data)
 

@@ -1,10 +1,12 @@
 ################################################################################
 # 
 # upgrain.R
-# Version 1.4
-# 25/02/2016
+# Version 1.5
+# 27/07/2017
 #
 # Updates:
+#   27/07/2017: SpatialPointsDataFrame allowed as input
+#               'lat' and 'lon' as column names replaced by 'x' and 'y'
 #   18/08/2016: Change default to "All_Sampled"
 #   25/02/2016: Bug on extent in standardised rasters fixed
 #               Added option to save all rasters
@@ -16,18 +18,45 @@
 #   14/04/2015: plotting functions added
 #               help file updated
 #
-# Upgrains atlas data to larger grain sizes. All raster files are then
-# standardised to have the same extent as the extent of the maximum grain size.
-# All new cells are given a value of 0.
+# Takes presence-absence atlas data and aggregates data to larger grain sizes, 
+# returning occupancy at each grain size for use in downscale modelling. The 
+# extent for all scales is standardised to that of the largest grain size by 
+# applying a threshold for the proportion of unsampled atlas cells allowed 
+# within a cell at the largest grain size. The threshold can be chosen by 
+# the user or one of four threshold selections methods apply. 
 #
-# data = either a raster file of presence-absence atlas data, or a data frame of 
-#        sampled cells with longitude, latitude and presence-absence.
+# # args:
+#   atlas.data = either a raster file of presence-absence atlas data, or a data 
+#                frame of sampled cells with longitude, latitude and 
+#                presence-absence; or a SpatialPointsDataFrame with a data 
+#                frame containing 'presence'
+#   cell.width = if data is a data frame, the cell widths of sampled cells.
+#   scales = the number of cells to upgrain. Upgraining will happen by factors 
+#            of 2 - ie if scales = 3, the atlas data will be aggregated in 2x2 
+#            cells, 4x4 cells and 8x8 cells.
+#   threshold = a value for the proportion of unsampled atlas cells allowed 
+#               within a cell at the largest grain size. Default = NULL.
+#   method = one of the default methods for selecting a threshold. There are four
+#            four choices: "All_Sampled" (default), "All_Occurrences", 
+#            "Gain_Equals_Loss" or "Sampled_Only".
+#   plot = Plots the original atlas data alongside the standardised atlas data 
+#          at each grain size. Default = TRUE.
+#   return.rasters = If TRUE returns the extent-standardised atlas data upgrained 
+#                    to all grain sizes (NOTE: the extent-standardised atlas data 
+#                    at the original grain size is always returned regardless).
+#                    Default = FALSE.
 #
-# cell.width = if data is a data frame, the cell widths of sampled cells.
-#
-# scales = the number of cells to upgrain. Upgraining will happen by factors of
-#          2 - ie if scales = 3, the atlas data will be aggregated in 2x2 cells,
-#          4x4 cells and 8x8 cells.
+# outputs:
+#   An object of class 'upgrain', containing five objects:
+#     threshold = a value for the threshold used.
+#     extent.stand = a value for the standardised extent.
+#     occupancy.stand = dataframe of cell area, extent and occupancies of after
+#                       upgrain-standardisation to be used as input in downscaling
+#     occupancy.orig = dataframe of cell area, extent and occupancies before
+#                       upgrain-standardisation.
+#     atlas.raster.stand = A raster layer of the extent-standardised atlas data.
+#     scaled.rasters = (if return.rasters = TRUE) a list containing the 
+#                      extent-standardised atlas data upgrained to all grain sizes
 #
 ################################################################################
 
@@ -83,6 +112,13 @@ upgrain <- function(atlas.data,
     }
   }
   
+  ### Error checking: if SpatialPointsDataFrame needs cell width
+  if(class(atlas.data)[1] == "SpatialPointsDataFrame") {
+    if(is.null(cell.width)) {
+      stop("If data is SpatialPointsDataFrame cell.width is required")
+    }
+  }
+  
   ################################################################################
   ### data storage
   original <- data.frame("Cell.area" = rep(NA, scales + 1), 
@@ -94,13 +130,28 @@ upgrain <- function(atlas.data,
   
   ### data manipulation
   if(is.data.frame(atlas.data) == "TRUE") {
-    longitude <- atlas.data[, 1]
-    latitude <- atlas.data[, 2]
-    presence <- atlas.data[, 3]
+    ### error checking: format of data frame
+    if(ncol(atlas.data) != 3) {
+      stop("Input data frame must contain three columns named 'x', 
+           'y', and 'presence' in that order")
+    }
+    ### error checking: column names
+    if(sum(names(atlas.data) != c("x", "y", "presence")) > 0) 
+    {
+      stop("Input data frame must contain three columns named 'x', 
+            'y', and 'presence' in that order")
+    }
+    
+    longitude <- atlas.data[, "x"]
+    latitude <- atlas.data[, "y"]
+    presence <- atlas.data[, "presence"]
     presence[presence > 0] <- 1
-    shapefile <- sp::SpatialPointsDataFrame(coords = data.frame(lon = longitude,
-                                                                lat = latitude),
-                                            data = data.frame(presence = presence)) 
+    shapefile <- sp::SpatialPointsDataFrame(coords = data.frame(x = 
+                                                                  longitude,
+                                                                y = 
+                                                                  latitude),
+                                            data = data.frame(presence = 
+                                                                presence)) 
     atlas_raster <- raster::raster(ymn = min(latitude) - (cell.width / 2),
                                    ymx = max(latitude) + (cell.width / 2),
                                    xmn = min(longitude) - (cell.width / 2), 
@@ -108,6 +159,17 @@ upgrain <- function(atlas.data,
                                    resolution = cell.width)
     atlas_raster <- raster::rasterize(shapefile, atlas_raster)
     atlas_raster <- raster::dropLayer(atlas_raster, 1)
+  }
+  
+  if(class(atlas.data)[1] == "SpatialPointsDataFrame") {
+    atlas_raster <- raster::raster(ymn = min(latitude) - (cell.width / 2),
+                                   ymx = max(latitude) + (cell.width / 2),
+                                   xmn = min(longitude) - (cell.width / 2), 
+                                   xmx = max(longitude) + (cell.width / 2),
+                                   resolution = cell.width)
+    atlas_raster <- raster::rasterize(shapefile, atlas_raster)
+    atlas_raster <- raster::dropLayer(atlas_raster, 1)
+    atlas_raster@data@values[atlas_raster@data@values > 0] <- 1
   }
   
   if(class(atlas.data) == "RasterLayer") {

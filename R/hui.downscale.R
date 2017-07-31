@@ -1,10 +1,12 @@
 ################################################################################
 # 
 # Hui.downscale.R
-# Version 1.2
-# 05/05/2015
+# Version 1.3
+# 27/07/2017
 #
 # Updates:
+#   27/07/2017: SpatialPointsDataFrame allowed as input
+#               'lat' and 'lon' as column names replaced by 'x' and 'y'
 #   29/09/2016: No need to input cell width in hui.downscale with raster
 #   05/05/2014: calculates AOO
 #               Can use upgrain as an input
@@ -15,7 +17,8 @@
 # Args:
 #   atlas.data: either a data frame containing a column of presence and absence 
 #               data and a column each for longitude and latitude; or a raster
-#               file where 1 = presence and 0 = absence.
+#               file where 1 = presence and 0 = absence; or a 
+#               SpatialPointsDataFrame with a data frame containing 'presence'
 #   cell.width: Cell area of the atlas data (ie resolution)
 #   new.areas: vector of grain sizes for model prediction (area)
 #   extent: extent of points for conversion to AOO
@@ -31,13 +34,43 @@ hui.downscale <- function(atlas.data,
                           extent = NULL,
                           tolerance = 1e-6,
                           plot = FALSE) {
-  # data input handling
+  
+  ### error checking: if data frame requires extent
+  if(is.data.frame(atlas.data) == "TRUE") {
+    if(is.null(extent)) {
+      stop("Extent required if data input is data frame of coordinates")
+    }
+  }
+  
+  ### error checking: if SpatialPointsDataFrame requires extent
+  if(class(atlas.data)[1] == "SpatialPointsDataFrame") {
+    if(is.null(extent)) {
+      stop("Extent required if data input is SpatialPointsDataFrame")
+    }
+  }
+  
+  ### Error checking: if data frame needs cell width
+  if(is.data.frame(atlas.data) == "TRUE") {
+    if(is.null(cell.width)) {
+      stop("If data is data.frame cell.width is required")
+    }
+  }
+  
+  ### Error checking: if SpatialPointsDataFrame needs cell width
+  if(class(atlas.data)[1] == "SpatialPointsDataFrame") {
+    if(is.null(cell.width)) {
+      stop("If data is SpatialPointsDataFrame cell.width is required")
+    }
+  }
+  
+  ###############################################################################
+  ### data input handling
   if(class(atlas.data) == "upgrain") {
     extent <- atlas.data$extent.stand
     species <- raster::rasterToPoints(atlas.data$atlas.raster.stand)
     species <- data.frame(presence = species[, 3],
-                          lon = species[, "y"],
-                          lat = species[, "x"])
+                          x = species[, "y"],
+                          y = species[, "x"])
     cell.width <- raster::res(atlas.data$atlas.raster.stand)[1]
     cell.area <- cell.width ^ 2
   }
@@ -45,35 +78,39 @@ hui.downscale <- function(atlas.data,
   if(class(atlas.data) == "RasterLayer") {
     species <- raster::rasterToPoints(atlas.data)
     species <- data.frame(presence = species[, 3],
-                          lon = species[, "y"],
-                          lat = species[, "x"])
+                          x = species[, "y"],
+                          y = species[, "x"])
     cell.width <- raster::res(atlas.data)[1]
     cell.area <- cell.width ^ 2
   }
   
-  if((class(atlas.data) != "RasterLayer") & (class(atlas.data) != "upgrain")) {
+  if(class(atlas.data) == "SpatialPointsDataFrame") {
+    species <- data.frame(presence = atlas.data@data[, "presence"],
+                          x = atlas.data@coords[, "y"],
+                          y = atlas.data@coords[, "x"])
+    cell.area <- cell.width ^ 2
+  }
+  
+  if(is.data.frame(atlas.data) == "TRUE") {
     species <- atlas.data
     cell.area <- cell.width ^ 2
   }
   
-  # error checking: if data frame requires extent
-  if((class(atlas.data) != "RasterLayer") & (class(atlas.data) != "upgrain")) {
-    if(is.null(extent)) {
-      stop("Extent required if data input is data frame of coordinates")
-    }
-  }
-  
-  # error checking that it's presence-absence data
+  ##############################################################################
+  ### error checking that it's presence-absence data
   if(sum(species[, "presence"] > 1, na.rm = TRUE) > 0) {
     stop("Presence-absence data not in 1's and 0's")
   }
   
-  # error checking: predicting at finer scales than atlas scale
+  ### error checking: predicting at finer scales than atlas scale
   if(sum(new.areas >= cell.area) > 0) {
     stop("One or more fine scale grid sizes are larger than atlas scale grid size",
          call. = FALSE)
   }
-    
+  
+  #############################################################################
+  ### Hui modelling
+  
   # p+ : observed probability of occurrence at coarse grain
   p1_coarse <- sum(species[, "presence"] == 1, na.rm = TRUE) / 
     sum(!is.na(species[, "presence"]))

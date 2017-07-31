@@ -109,7 +109,7 @@ NOTE: for downscaling it is important that occupancies above the scale of satura
 data.file <- system.file("extdata", "atlas_data.txt", package = "downscale")
 atlas.data <- read.table(data.file, header = TRUE)
 
-## if the input data is a data frame it must have the columns "lon", "lat"
+## if the input data is a data frame it must have the columns "x", "y"
 ## and "presence"
 head(atlas.data)
 

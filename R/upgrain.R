@@ -1,10 +1,11 @@
 ################################################################################
 # 
 # upgrain.R
-# Version 1.5
+# Version 1.6
 # 27/07/2017
 #
 # Updates:
+#   31/07/2017: Bug when using SpatialPointsDataFrame fixed
 #   27/07/2017: SpatialPointsDataFrame allowed as input
 #               'lat' and 'lon' as column names replaced by 'x' and 'y'
 #   18/08/2016: Change default to "All_Sampled"
@@ -162,12 +163,13 @@ upgrain <- function(atlas.data,
   }
   
   if(class(atlas.data)[1] == "SpatialPointsDataFrame") {
-    atlas_raster <- raster::raster(ymn = min(latitude) - (cell.width / 2),
-                                   ymx = max(latitude) + (cell.width / 2),
-                                   xmn = min(longitude) - (cell.width / 2), 
-                                   xmx = max(longitude) + (cell.width / 2),
+    ext <- extent(atlas.data)
+    atlas_raster <- raster::raster(ymn = ext@ymin - (cell.width / 2),
+                                   ymx = ext@ymax + (cell.width / 2),
+                                   xmn = ext@xmin - (cell.width / 2), 
+                                   xmx = ext@xmax + (cell.width / 2),
                                    resolution = cell.width)
-    atlas_raster <- raster::rasterize(shapefile, atlas_raster)
+    atlas_raster <- raster::rasterize(atlas.data, atlas_raster)
     atlas_raster <- raster::dropLayer(atlas_raster, 1)
     atlas_raster@data@values[atlas_raster@data@values > 0] <- 1
   }

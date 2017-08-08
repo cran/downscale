@@ -1,5 +1,16 @@
 NEWS for downscale package
 
+Changes for 2.0-2
+---------------
+08/08/2017
+SpatialPointsDataFrame input added to upgrain helpfile
+downscale helpfile updated
+
+Changes for 2.0-1
+---------------
+01/08/2017
+Bug when using SpatialPointsDataFrame corrected
+
 Changes for 2.0-0
 ---------------
 28/07/2017

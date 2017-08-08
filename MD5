@@ -1,6 +1,6 @@
-abf661c9f25bb9d496d337c2a09475c4 *DESCRIPTION
+00674c39825fa4975d937e391de7b9a3 *DESCRIPTION
 722f9b48a999308361e6bf7c4a66c28c *NAMESPACE
-1d5c71bad2b1268b5f24149465c57f55 *NEWS
+6b5a24304d7b56d73d6f2ecbb8a2d23a *NEWS
 9dfd44c7e7a1d0ec7ae408ee902e3ffb *R/DataInput.R
 7952c4cda276637183e7db9fd26d2c58 *R/HuiFunctions.R
 ed9e250d37efa9435c7df7cb8c19e6de *R/OptimiseParameters.R
@@ -17,15 +17,15 @@ bf139ebe0601284443c22038fadb3a12 *R/StartingParams.R
 0e193c32ec6466207681c2a4e74c6a51 *R/hui.downscale.R
 6dd7461404ad8348e75f2699c4770519 *R/plot.predict.downscale.R
 111591638d8ce26ca73500fb797884f4 *R/predict.downscale.R
-772a85ef8824e1841dc44074dfb1a5de *R/upgrain.R
-038b91ff9051f38e9fe78024245b3b30 *R/upgrain.threshold.R
+372c3a654d799e51ac117d165b423612 *R/upgrain.R
+7a3ed94b77606429c766c2247416cfd1 *R/upgrain.threshold.R
 d81d331a30add496cd5f475d98d64ce2 *build/vignette.rds
 de72c8dd0fff4ed7bf466f7d73675c10 *inst/doc/Downscaling.R
 74c4ea425b31088a3b98ab1d08006862 *inst/doc/Downscaling.Rnw
-39a2e4481332acbf134e2ed077ce13a4 *inst/doc/Downscaling.pdf
+60ebcecca0287d15bf5fd10dc09667bb *inst/doc/Downscaling.pdf
 c22b297bebb40f56bcdd5b53209b4472 *inst/doc/Upgraining.R
 2d4a54c66e325628a4d33d3149b5387b *inst/doc/Upgraining.Rnw
-c3336a8cebd87b4a6050b31e12bff2e1 *inst/doc/Upgraining.pdf
+4720fefa53138ff7ffd84010b9892bd1 *inst/doc/Upgraining.pdf
 ae3b3df9970b49b6523e608759bc957d *inst/extdata/UK.cpg
 1979bf59f1449af3945fb78cf7ed36ae *inst/extdata/UK.dbf
 c742bee3d4edfc2948a2ad08de1790a5 *inst/extdata/UK.prj
@@ -35,7 +35,7 @@ eaf247dbc3fe1d14b77deb2fa138e6a5 *inst/extdata/UK.sbn
 319a724f10cefbf3270937b91e514fc1 *inst/extdata/UK.shx
 58908cf6b21699cf96374516d4132346 *inst/extdata/atlas_data.txt
 73aab61648e3bf6e741d70f5dc30328f *man/Downscale-package.Rd
-1e98d17b205a75a23be60aa16afb2845 *man/downscale.Rd
+e0e1c83f9c90a974c66d7162c534109e *man/downscale.Rd
 0d9369908cf8c33b7993eda3dcbfa340 *man/ensemble.downscale.Rd
 23d8576220ff16738bfa8e6b3c85a3a2 *man/figures/Equations.png
 e997e29edfbd807320eb4a47e814c677 *man/figures/Flow.png
@@ -47,7 +47,7 @@ caba50f984056f4ad12bc7547b5fbf57 *man/figures/Thumbs.db
 12ab9e4038f95020cbeb613d058e48e8 *man/hui.downscale.Rd
 049f6d708e538df2885f47d8bf3cefdd *man/plot.predict.downscale.Rd
 57bd5489afb185543214a4c5667b8304 *man/predict.downscale.Rd
-6d294e376b7e3660ca94a881e90c6315 *man/upgrain.Rd
+e0a316567cbbcdd58a4be0a492b0e51b *man/upgrain.Rd
 da719a237b1b79730959aed92533cdad *man/upgrain.threshold.Rd
 d1ff72a18f92a5c9a9c7558ab4dc7120 *vignettes/Downscaling-downscale.pdf
 43e198e8671454794c51c24b26c254c8 *vignettes/Downscaling-downscale.png

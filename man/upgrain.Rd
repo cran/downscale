@@ -110,6 +110,17 @@ all_sampled$occupancy.stand
 
 ## and the original occupancies (note that extent varies with scale)
 all_sampled$occupancy.orig
+
+## if data is SpatialPointsDataFrame
+presence <- data.frame(presence = atlas.data$presence)
+spdf <- SpatialPointsDataFrame(coords = data.frame(x = atlas.data$x, 
+                                                   y = atlas.data$y),
+                               data = presence)
+                               
+all_sampled <- upgrain(atlas.data = spdf,
+                       cell.width= 10,
+                       scales = 3,
+                       method = "All_Sampled")  
 }
 \author{
 Charles Marsh <\email{charliem2003@gmail.com}>

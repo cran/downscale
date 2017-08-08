@@ -92,7 +92,7 @@ The optimisation procedure requires initial starting values for all model parame
 \code{"PL"} \tab \tab \tab C = 0.01; \tab \tab \tab z = 0.01 \tab \tab \tab \cr
 \code{"Logis"} \tab \tab \tab C = 0.01; \tab \tab \tab z = 0.01 \tab \tab \tab \cr
 \code{"Poisson"} \tab \tab \tab gamma = 1e-8 \tab \tab \tab \tab \tab \tab \tab \cr
-\code{"NB"} \tab \tab \tab C = 0.01; \tab \tab \tab k = 0.01 \tab \tab \tab \cr
+\code{"NB"} \tab \tab \tab gamma = 0.01; \tab \tab \tab k = 0.01 \tab \tab \tab \cr
 \code{"GNB"} \tab \tab \tab C = 0.00001; \tab \tab \tab z = 1; \tab \tab k = 0.01\cr
 \code{"INB"} \tab \tab \tab C = 1; \tab \tab \tab gamma = 0.01; \tab \tab b = 0.1\cr
 \code{"FNB"} \tab \tab \tab N = 10; \tab \tab \tab k = 10 \tab \tab \tab \cr

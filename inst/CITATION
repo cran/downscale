@@ -1,0 +1,18 @@
+citHeader("To cite downscale in publications please use:")
+
+citEntry(entry = "article",
+         title  = "{downscale}: downscale: An {R} Package for Downscaling Species Occupancy from Coarse-Grain Data to Predict Occupancy at Fine-Grain Sizes",
+         author       = personList(as.person("Charles J. Marsh"),
+                                   as.person("Louise J. Barwell"),
+                                   as.person("Yoni Gavish"),
+                                   as.person("William E. Kunin")),
+         journal      = "Journal of Statistical Software",
+         year         = "2017 - in press",
+         pages        = "1--18",
+
+  textVersion  =
+  paste("Charles J. Marsh, Louise J. Barwell, Yoni Gavish, William E. Kunin (2017).",
+        "downscale: An R Package for Downscaling Species Occupancy from Coarse-Grain Data to Predict Occupancy at Fine-Grain Sizes.",
+        "Journal of Statistical Software, in press.")
+)
+

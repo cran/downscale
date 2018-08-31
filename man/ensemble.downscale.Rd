@@ -130,6 +130,10 @@ Azaele, S., Cornell, S.J., & Kunin, W.E. (2012). Downscaling
 Barwell, L.J., Azaele, S., Kunin, W.E., & Isaac, N.J.B. (2014).
   Can coarse-grain patterns in insect atlas data predict local occupancy?
   \emph{Diversity and Distributions} 20, 895-907.
+  
+Groom, Q., Marsh, C.J., Gavish, Y. Kunin, W.E. (2018). How to predict fine resolution occupancy from coarse occupancy data, \emph{Methods in Ecology and Evolution}. In press.
+  
+  Marsh, C.J, Barwell, L.J., Gavish, Y., Kunin, W.E. (2018). downscale: An R package for downscaling species occupancy from coarse-grain data to predict occupancy at fine-grain sizes, \emph{Journal of Statistical Software, Code Snippets} 86(3), 1-20.
 }
 \seealso{
 See \code{\link{upgrain}} for creating objects of class \code{"upgrain"}. See \code{\link{downscale}} and \code{\link{predict.downscale}}, and \code{link{hui.downscale}} for downscaling models individually.

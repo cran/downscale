@@ -63,4 +63,8 @@ Hui, C. (2009). On the scaling patterns of species spatial
 Hui, C., McGeoch, M.A., & Warren, M. (2006). A spatially explicit
   approach to estimating species occupancy and spatial correlation.
   \emph{Journal of Animal Ecology} 7, 140-147.
+  
+Groom, Q., Marsh, C.J., Gavish, Y. Kunin, W.E. (2018). How to predict fine resolution occupancy from coarse occupancy data, \emph{Methods in Ecology and Evolution}. In press.
+
+Marsh, C.J, Barwell, L.J., Gavish, Y., Kunin, W.E. (2018). downscale: An R package for downscaling species occupancy from coarse-grain data to predict occupancy at fine-grain sizes, \emph{Journal of Statistical Software, Code Snippets} 86(3), 1-20.
 }

@@ -1,12 +1,11 @@
 Package: downscale
 Type: Package
 Title: Downscaling Species Occupancy
-Version: 2.0-3
-Date: 2017-08-24
+Version: 3.0-1
+Date: 2018-08-31
 Author: Charles Marsh [aut, cre]
 Maintainer: Charles Marsh <charliem2003@gmail.com>
-Description: A set of functions that downscales species occupancy at
-    coarse grain sizes to predict species occupancy at fine grain sizes.
+Description: Downscales species occupancy at coarse grain sizes to predict species occupancy at fine grain sizes. Ten models are provided to fit and extrapolate the occupancy-area relationship, as well as methods for preparing atlas data for modelling. See Marsh et. al. (2018) doi:10.18637/jss.v086.c03.
 License: GPL-2
 Depends: raster (>= 2.4-20), R (>= 3.0.0)
 Imports: cubature (>= 1.1-2), graphics, grDevices, methods, minpack.lm
@@ -23,8 +22,8 @@ Collate: 'DataInput.R' 'downscale.R' 'OptimiseParameters.R'
 RoxygenNote: 6.0.1
 Repository: CRAN
 Repository/R-Forge/Project: downscale
-Repository/R-Forge/Revision: 55
-Repository/R-Forge/DateTimeStamp: 2017-08-25 15:29:29
-Date/Publication: 2017-08-25 17:37:33 UTC
+Repository/R-Forge/Revision: 59
+Repository/R-Forge/DateTimeStamp: 2018-08-31 11:17:03
+Date/Publication: 2018-08-31 13:50:03 UTC
 NeedsCompilation: no
-Packaged: 2017-08-25 15:45:19 UTC; rforge
+Packaged: 2018-08-31 11:30:23 UTC; rforge

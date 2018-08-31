@@ -102,4 +102,8 @@ head(thresh$Data)
 \author{
 Charles Marsh <\email{charliem2003@gmail.com}>
 }
+\references{
+Groom, Q., Marsh, C.J., Gavish, Y. Kunin, W.E. (2018). How to predict fine resolution occupancy from coarse occupancy data, \emph{Methods in Ecology and Evolution}. In press.
 
+Marsh, C.J, Barwell, L.J., Gavish, Y., Kunin, W.E. (2018). downscale: An R package for downscaling species occupancy from coarse-grain data to predict occupancy at fine-grain sizes", \emph{Journal of Statistical Software, Code Snippets} 86(3), 1-20.
+}

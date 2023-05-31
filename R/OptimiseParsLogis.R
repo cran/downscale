@@ -1,32 +1,34 @@
 ################################################################################
 # 
-# OptimiseParameters.R
-# Version 1.0
-# 28/01/2015
+# OptimiseParametersLogis.R
+# Version 1.1
+# 16/05/2023
 #
-# Optimisation procedure of finding parameters that best fit observed data
+# Updates:
+#   16/05/2023: Renamed
+#
+# Optimisation procedure of finding parameters that best fit observed data for
+# the Logistic model
 #
 # Args:
-#   Area: Vector of grain sizes for obsvered area of occupancies
+#   Area: Vector of grain sizes for observed area of occupancies
 #   Observed: Vector of observed area of occupancies
-#   Model: which downscaling model to use. Choice of:
-#     Nachman   Nachman model
-#     PL        Power Law model
-#     Poisson   Poisson model
-#     NB        Negative binomial model
-#     GNB       Generalised negative binomial model
-#     INB       Improved negative binomial model
+#   model = "Logis"
 #
 # Returns:
 #   optim.pars: list of parameters estimated from optimisation procedure
 #
 ################################################################################
 
-OptimiseParameters <- function(area, observed, model, starting.params = NULL) {
-  # Retrieve residual function, downscaling function and starting parameters
+OptimiseParsLogis <- function(area, 
+                               observed,
+                               model = "Logis",
+                               starting.params = NULL) {
+  
+  # Retrive residual function, downscaling function and starting parameters
   # for model of choice
   resid.fun <- getFunction(paste("Resid", model, sep = ""))
-  pred.fun <- getFunction(paste("Predict", model, sep = ""))
+  pred.fun <- getFunction(paste("Predict", model, sep = ""))  
   if(is.null(starting.params)) {
     starting.pars <- get(paste("Params", model, sep = ""))
   }
@@ -39,6 +41,8 @@ OptimiseParameters <- function(area, observed, model, starting.params = NULL) {
                                      fn = resid.fun,
                                      area = area,
                                      observed = log(observed),
+                                     lower = c("C" = 0, "z" = -Inf),
+                                     upper = c("C" = Inf, "z" = Inf),
                                      control = minpack.lm::nls.lm.control(
                                        maxiter = 1000))
   optim.pars <- as.list(coef(optimisation))

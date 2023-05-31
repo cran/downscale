@@ -16,7 +16,7 @@ knitr::include_graphics("figures/Original_upgrain.png")
 ## ----Saturation, echo = FALSE, out.width = "100%", fig.align = "left", fig.cap = "Occupancy-area relationships (OAR) for two species showing a) the scale of saturation (the grain size at which all cells are occupied) and b) the scale of endemism (the scale at which only one cell is occupied)."----
 knitr::include_graphics("figures/Saturation.png")
 
-## ----Flow, echo = FALSE, out.width = "70%", fig.align = "left", fig.cap = "Structure of the `downscale` package showing the flow between the seven functions (yellow) and the three output object classes (orange). Black arrows represent the input of raw data of three types: a raster layer of presence-absence data, a data frame of cell coordinates and presence-absence for each cell, and a data frame of occupancies at coarse-grain sizes. Yellow arrows are where the output of one function may be used as the input for the next function."----
+## ----Flow, echo = FALSE, out.width = "70%", fig.align = "left", fig.cap = "Structure of the `downscale` package showing the flow between the seven functions (yellow) and the three output object classes (orange). Black arrows represent the input of raw data of four types: a raster layer or a spatial points layer of presence-absence data, a data frame of cell coordinates and presence-absence for each cell, and a data frame of occupancies at coarse-grain sizes. Yellow arrows are where the output of one function may be used as the input for the next function."----
 knitr::include_graphics("figures/Flow.png")
 
 ## ----eval = FALSE-------------------------------------------------------------
@@ -24,6 +24,10 @@ knitr::include_graphics("figures/Flow.png")
 
 ## ----eval = FALSE-------------------------------------------------------------
 #  library("downscale")
+
+## -----------------------------------------------------------------------------
+library("sf")
+library("terra")
 
 ## -----------------------------------------------------------------------------
 occupancy <- data.frame(Cell.area = c(100, 400, 1600, 6400),
@@ -222,7 +226,6 @@ ensemble <- ensemble.downscale(occupancies     = occupancy,
 ## -----------------------------------------------------------------------------
 ## load in the necessary libraries
 library(rgbif)
-library(downscale)
 
 ## ----eval = FALSE-------------------------------------------------------------
 #  ### NOT RUN in this tutorial
@@ -240,37 +243,36 @@ recordsFile <- system.file("extdata", "Polyommatus_coridon_gbif_records.txt",
 records <- read.table(recordsFile, header = TRUE)
 
 ## -----------------------------------------------------------------------------
-recordsCoords <- SpatialPoints(data.frame(Lon = records$decimalLongitude,
-                                          Lat = records$decimalLatitude), 
-                               proj4string = CRS("+proj=longlat +datum=WGS84
-                                                   +ellps=WGS84"))
+recordsCoords <- st_as_sf(records,
+                          coords = c("decimalLongitude", "decimalLatitude"),
+                          crs = "OGC:CRS84")
 
 ## -----------------------------------------------------------------------------
-library(rgdal)
-
 ## reproject the coordinates to British National Grid
-recordsCoords <- spTransform(recordsCoords, CRS("+init=epsg:27700 +units=km"))
+BNG <- "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +units=km +no_defs"
+recordsCoords <- st_transform(recordsCoords,
+                              crs = BNG)
 
 ## ----fig.width = 6, fig.height = 5--------------------------------------------
-plot(recordsCoords, axes = T)
+plot(st_geometry(recordsCoords), axes = TRUE)
 
 ## ----fig.width = 5, fig.height = 4--------------------------------------------
 ## set grain size as 20 km
 cellWidth <- 20
 
 # extract extent of coordinates
-coordsExtent <- extent(recordsCoords)
+coordsExtent <- ext(recordsCoords)
 
 ## create a blank raster to fit the coordinates (note the addition of half a 
 ## cell width on all sides)
-gbif_raster <- raster(xmn = coordsExtent@xmin - (cellWidth / 2),
-                      xmx = coordsExtent@xmax + (cellWidth / 2),
-                      ymn = coordsExtent@ymin - (cellWidth / 2),
-                      ymx = coordsExtent@ymax + (cellWidth / 2),
-                      res = cellWidth)
+gbif_raster <- rast(xmin = coordsExtent$xmin - (cellWidth / 2),
+                    xmax = coordsExtent$xmax + (cellWidth / 2),
+                    ymin = coordsExtent$ymin - (cellWidth / 2),
+                    ymax = coordsExtent$ymax + (cellWidth / 2),
+                    res = cellWidth)
                       
 ## assign cells with presence records as 1
-gbif_raster <- rasterize(recordsCoords, gbif_raster, field = 1)
+gbif_raster <- rasterize(recordsCoords, gbif_raster, field = 1, fun = "min")
 
 ## convert cells with NA (no records) to 0
 gbif_raster[is.na(gbif_raster)] <- 0
@@ -290,9 +292,9 @@ occupancy$occupancy.orig[1, 2]
 occupancy$extent.stand
 
 ## ----fig.height = 6, fig.width = 7.5------------------------------------------
-ensemble <- ensemble.downscale(occupancies = occupancy,
-                               models = "all",
-                               new.areas = c(1, 10, 100, 400, 1600, 6400),
+ensemble <- ensemble.downscale(occupancies   = occupancy,
+                               models        = c("all"),
+                               new.areas     = c(1, 10, 100, 400, 1600, 6400),
                                tolerance_mod = 1e-3)
 
 ## ----fig.height = 6, fig.width = 7.5------------------------------------------
@@ -302,10 +304,7 @@ ensemble <- ensemble.downscale(occupancy,
                                tolerance_mod = 1e-3,
                                starting_params = list(INB = list(C = 10, 
                                                                  gamma = 0.01, 
-                                                                 b = 0.1),
-                                                      Thomas = list(rho = 1e-6,
-                                                                    mu = 1,
-                                                                    sigma = 1)))
+                                                                 b = 0.1)))
 
 ## -----------------------------------------------------------------------------
 ensemble$AOO[, c("Cell.area", "Means")]
@@ -313,16 +312,17 @@ ensemble$AOO[, c("Cell.area", "Means")]
 ## ----fig.height = 4, fig.width = 5--------------------------------------------
 ### read in the shapefile
 uk <- system.file("extdata", "UK.shp", package = "downscale")
-uk <- shapefile(uk)
+uk <- st_read(uk)
 
 ## plot our GBIF records on top of the UK polygon
-plot(uk)
-plot(recordsCoords, add = TRUE, col = "red")
+plot(st_geometry(uk), axes = TRUE)
+plot(recordsCoords[1], add = TRUE, col = "red")
 
 ## ----fig.height = 5, fig.width = 4--------------------------------------------
 ## create a blank raster with the same extent as the UK polygon
-gbif_raster <- raster(ext = extent(uk),
-                      res = cellWidth)
+gbif_raster <- rast(ext = ext(uk),
+                    res = cellWidth,
+                    crs = crs(uk))
 
 ## assign cells with presence records as 1
 gbif_raster <- rasterize(recordsCoords, gbif_raster, field = 1)
@@ -335,7 +335,7 @@ gbif_raster <- mask(gbif_raster, uk)
 
 ## plot the masked atlas raster and overlay with the UK polygon
 plot(gbif_raster, legend = FALSE)
-plot(uk, add = TRUE)
+plot(st_geometry(uk), add = TRUE)
 
 ## ----fig.height = 5, fig.width = 7--------------------------------------------
 occupancy <- upgrain(gbif_raster,

@@ -8,8 +8,8 @@ Downscaling Species Occupancy
 \tabular{ll}{
 Package: \tab downscale\cr
 Type: \tab Package\cr
-Version: \tab 4.0-0\cr
-Date: \tab 2021-10-22\cr
+Version: \tab 4.2-1\cr
+Date: \tab 2021-10-25\cr
 License: \tab GPL-2\cr
 }
 }
@@ -39,18 +39,19 @@ Two vignettes are available to guide users. Both work through examples in code:\
 \code{vignette("Upgraining", package = "downscale")}
 }
 \section{Credits}{
-This package was created as part of deliverable D3.2 of WP3 of the project:
-\bold{EU-BON: Building the European Biodiversity Observation Network} -
-a 7th Framework Programme funded by the European Union under Contract No. 308454.
+This package was created as part of deliverable D3.2 of WP3 of the project: \bold{EU-BON: Building the European Biodiversity Observation Network} - a 7th Framework Programme funded by the European Union under Contract No. 308454.
 }
 
 \author{
 Charles Marsh with input from Louise Barwell and Cang Hui.
 
-Maintainer: Charles Marsh <charliem2003@gmail.com>
+Maintainer: Charles Marsh <charlie.marsh@mailbox.com>
+
+Website: https://github.com/charliem2003/downscale
 
 For reporting bugs or requesting information please include \emph{'downscale'} in the subject line.
 }
+
 \references{
 Azaele, S., Cornell, S.J., & Kunin, W.E. (2012). Downscaling species occupancy from coarse spatial scales. \emph{Ecological Applications} 22, 1004-1014.
 

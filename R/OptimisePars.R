@@ -1,35 +1,39 @@
 ################################################################################
 # 
-# OptimiseParametersThomas.R
-# Version 1.0
-# 30/01/2015
+# OptimisePars.R
+# Version 1.1
+# 16/05/2023
 #
-# Optimisation procedure of finding parameters that best fit observed data for
-# the Thomas model
+# Updates:
+#   16/05/2023: Renamed
+#
+# Optimisation procedure of finding parameters that best fit observed data
 #
 # Args:
-#   Area: Vector of grain sizes for obsvered area of occupancies
+#   Area: Vector of grain sizes for observed area of occupancies
 #   Observed: Vector of observed area of occupancies
-#   extent: Extent of study area (km2)
-#   tolerance: tolerance for integration. Lower numbers allow for greater
-#              accuracy but require longer processing times
-#   model = "Thomas"
+#   Model: which downscaling model to use. Choice of:
+#     Nachman   Nachman model
+#     PL        Power Law model
+#     Poisson   Poisson model
+#     NB        Negative binomial model
+#     GNB       Generalised negative binomial model
+#     INB       Improved negative binomial model
 #
 # Returns:
 #   optim.pars: list of parameters estimated from optimisation procedure
 #
 ################################################################################
 
-OptimiseParametersThomas <- function(area, 
-                                     observed, 
-                                     extent, 
-                                     tolerance = 1e-6,
-                                     model = "Thomas",
-                                     starting.params = NULL) {
+OptimisePars <- function(area,
+                         observed,
+                         model,
+                         starting.params = NULL) {
+  
   # Retrieve residual function, downscaling function and starting parameters
   # for model of choice
   resid.fun <- getFunction(paste("Resid", model, sep = ""))
-  pred.fun <- getFunction(paste("Predict", model, sep = ""))  
+  pred.fun <- getFunction(paste("Predict", model, sep = ""))
   if(is.null(starting.params)) {
     starting.pars <- get(paste("Params", model, sep = ""))
   }
@@ -40,9 +44,7 @@ OptimiseParametersThomas <- function(area,
   # Optimisation procedure
   optimisation <- minpack.lm::nls.lm(par = starting.pars,
                                      fn = resid.fun,
-                                     tolerance = tolerance,
                                      area = area,
-                                     extent = extent,
                                      observed = log(observed),
                                      control = minpack.lm::nls.lm.control(
                                        maxiter = 1000))

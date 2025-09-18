@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -42,21 +42,21 @@ head(thresh$Data)
 knitr::include_graphics("figures/Threshold_maps.png")
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  # run upgrain.threshold for two larger grain sizes
-#  thresh <- upgrain.threshold(atlas.data = atlas.data,
-#                              cell.width = 10,
-#                              scales     = 2,
-#                              thresholds = seq(0, 1, 0.01))
+# # run upgrain.threshold for two larger grain sizes
+# thresh <- upgrain.threshold(atlas.data = atlas.data,
+#                             cell.width = 10,
+#                             scales     = 2,
+#                             thresholds = seq(0, 1, 0.01))
 
 ## ----ThresholdMaps2, echo = FALSE, out.width = "100%", fig.align = "left", fig.cap = "Maps for the four possible thresholds after upgraining across two scales."----
 knitr::include_graphics("figures/Threshold_maps_2_scales.png")
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  # run upgrain.threshold for four larger grain sizes
-#  thresh <- upgrain.threshold(atlas.data = atlas.data,
-#                              cell.width = 10,
-#                              scales     = 4,
-#                              thresholds = seq(0, 1, 0.01))
+# # run upgrain.threshold for four larger grain sizes
+# thresh <- upgrain.threshold(atlas.data = atlas.data,
+#                             cell.width = 10,
+#                             scales     = 4,
+#                             thresholds = seq(0, 1, 0.01))
 
 ## ----ThresholdMaps4, echo = FALSE, out.width = "100%", fig.align = "left", fig.cap = "Maps for the four possible thresholds after upgraining across four scales."----
 knitr::include_graphics("figures/Threshold_maps_4_scales.png")

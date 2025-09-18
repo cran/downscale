@@ -11,7 +11,7 @@ library(downscale)
 knitr::include_graphics("figures/Original_upgrain.png")
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  vignette("Upgraining", package = "downscale")
+# vignette("Upgraining", package = "downscale")
 
 ## ----Saturation, echo = FALSE, out.width = "100%", fig.align = "left", fig.cap = "Occupancy-area relationships (OAR) for two species showing a) the scale of saturation (the grain size at which all cells are occupied) and b) the scale of endemism (the scale at which only one cell is occupied)."----
 knitr::include_graphics("figures/Saturation.png")
@@ -20,10 +20,10 @@ knitr::include_graphics("figures/Saturation.png")
 knitr::include_graphics("figures/Flow.png")
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  install.packages("downscale")
+# install.packages("downscale")
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  library("downscale")
+# library("downscale")
 
 ## -----------------------------------------------------------------------------
 library("sf")
@@ -68,7 +68,7 @@ atlasData <- read.table(dataFile, header = TRUE)
 head(atlasData)
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  vignette("Upgraining", package = "downscale")
+# vignette("Upgraining", package = "downscale")
 
 ## ----fig.show = "hide"--------------------------------------------------------
 ## explore thresholds using upgrain.threshold
@@ -228,14 +228,14 @@ ensemble <- ensemble.downscale(occupancies     = occupancy,
 library(rgbif)
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  ### NOT RUN in this tutorial
-#  ### Run this code to download the data yourself (results will slightly differ)
-#  records <- occ_search(scientificName = "Polyommatus coridon",
-#                        country        = "GB",
-#                        limit          = 10000,
-#                        hasCoordinate  = TRUE,
-#                        fields         = "minimal")
-#  records <- records$data
+# ### NOT RUN in this tutorial
+# ### Run this code to download the data yourself (results will slightly differ)
+# records <- occ_search(scientificName = "Polyommatus coridon",
+#                       country        = "GB",
+#                       limit          = 10000,
+#                       hasCoordinate  = TRUE,
+#                       fields         = "minimal")
+# records <- records$data
 
 ## -----------------------------------------------------------------------------
 recordsFile <- system.file("extdata", "Polyommatus_coridon_gbif_records.txt",

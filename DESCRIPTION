@@ -1,8 +1,8 @@
 Package: downscale
 Type: Package
 Title: Downscaling Species Occupancy
-Version: 5.0.0
-Date: 2023-05-24
+Version: 5.1.3
+Date: 2025-09-18
 Authors@R: person("Charles", "Marsh", email = "charlie.marsh@mailbox.org", role = c("aut", "cre", "cph"), comment = c(ORCID="0000-0002-0281-3115"))
 Maintainer: Charles Marsh <charlie.marsh@mailbox.org>
 URL: https://github.com/charliem2003/downscale
@@ -22,7 +22,8 @@ Collate: 'checkInputs.R' 'DataInput.R' 'downscale.R' 'OptimisePars.R'
 RoxygenNote: 7.2.3
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2023-05-31 11:46:22 UTC; charlie
-Author: Charles Marsh [aut, cre, cph] (<https://orcid.org/0000-0002-0281-3115>)
+Packaged: 2025-09-18 08:27:09 UTC; charlie
+Author: Charles Marsh [aut, cre, cph] (ORCID:
+    <https://orcid.org/0000-0002-0281-3115>)
 Repository: CRAN
-Date/Publication: 2023-05-31 22:20:11 UTC
+Date/Publication: 2025-09-18 09:00:08 UTC

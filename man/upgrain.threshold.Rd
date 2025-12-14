@@ -11,7 +11,7 @@ upgrain.threshold(atlas.data, cell.width = NULL, scales,
 \item{cell.width}{if data is a data frame or sf spatial points object, the cell widths of sampled cells. If data is a raster then leave as default (\code{= NULL})}
 
 \item{scales}{the number of cells to upgrain. Upgraining will happen by factors of 2 - ie if scales = 3, the atlas data will be aggregated in 2x2 cells, 4x4 cells and 8x8 cells.}
-  
+
 \item{thresholds}{a vector of thresholds between and including 0 and 1 for the quantity of unsampled NA cells that can be included.}
 
 \item{plot}{Two sets of four plots (hit return to see the next set). Default = TRUE.}
@@ -39,8 +39,8 @@ A more detailed description is available at \code{vignette("Upgraining", package
 
 In order to \code{\link{downscale}} we need to \code{\link{upgrain}} our atlas data across several scales. However, if the atlas data is not rectangular, as we aggregate cells during upgraining then the extent also increases.
 
-\if{html}{\figure{Original.png}{options: width="100\%" alt="Figure: Original.png"}}
-\if{latex}{\figure{Original.png}{options: width=14cm}}
+\if{html}{\figure{Original.png}{options: style="width: 100\%;"}}
+\if{latex}{\figure{Original.png}{options: width = 14cm}}
 
 Instead we must ensure the extent is constant across all scales by fixing the extent at all grain sizes to the extent of the largest grain size and convert our proportion of occupied cells back to area of occupancy by using the standardised extent (not the original atlas data extent).
 
@@ -73,12 +73,12 @@ The final choice of threshold is up to the user on a case-by-case basis but we p
       1 \tab	Sampled_Only \tab \tab	Only cells that contain 100\% sampled atlas data are included. \cr
       }
 }
-\if{latex}{\figure{Threshold.png}{options: width=10cm}}
+\if{latex}{\figure{Threshold.png}{options: width = 10cm}}
 
 The function also creates maps for each of these four thresholds. In the example case this clearly demonstrates the trade-off between generating assumptions about unsampled areas, and losing data (and Occurrences) for the sampled atlas data.
 
-\if{html}{\figure{Maps.png}{options: width="100\%" alt="Figure: Maps.png"}}
-\if{latex}{\figure{Maps.png}{options: width=13cm}}
+\if{html}{\figure{Maps.png}{options: style="width: 100\%;"}}
+\if{latex}{\figure{Maps.png}{options: width = 13cm}}
 }
 
 \examples{

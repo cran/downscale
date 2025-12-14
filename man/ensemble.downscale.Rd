@@ -70,7 +70,7 @@ Please take particular note of captials. The default starting parameters are:
 \code{"Thomas"} \tab \tab \tab rho = 1e-8; \tab \tab \tab mu = 10; \tab \tab sigma = 1\cr
 }
 }
-\if{latex}{\figure{Params.png}{options: width=7cm}}
+\if{latex}{\figure{Params.png}{options: width = 7cm}}
 }
 
 \examples{

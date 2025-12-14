@@ -65,7 +65,7 @@ Nine downscaling models are available (and also see \code{\link{hui.downscale}} 
    \code{"Thomas"} \tab  \tab  Thomas model \tab see below\cr
    }
 }
-\if{latex}{\figure{Equations.png}{options: width=13cm}}
+\if{latex}{\figure{Equations.png}{options: width = 13cm}}
 
 The finite negative binomial model (\code{"FNB"}) incorporates several gamma functions. This may result in integers larger than is possible to store in R. Therefore multiple precision floating point numbers (\code{\link[Rmpfr]{mpfr}} function in package \pkg{Rmpfr}) are used to make calculations possible.
 
@@ -86,7 +86,7 @@ The optimisation procedure requires initial starting values for all model parame
 \code{"Thomas"} \tab \tab \tab rho = 1e-8; \tab \tab \tab mu = 10; \tab \tab sigma = 1\cr
 }
 }
-\if{latex}{\figure{Params.png}{options: width=7cm}}
+\if{latex}{\figure{Params.png}{options: width = 7cm}}
 
 NOTE: for downscaling it is important that occupancies above the scale of saturation (the grain size at which all cells are occupied) and the scale of saturation (the grain size where only a single cell is occupied) are not included for modelling. The \code{downscale} functions will automatically set these occupancies to NA.
 }

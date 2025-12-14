@@ -1,3 +1,7 @@
+# downscale 5.1.4
+* 14/12/2025
+*Fixes specifying fig widths in help files
+
 # downscale 5.1.3
 * 18/09/2025
 * Removes sapply warning in predict.downscale

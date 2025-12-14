@@ -20,8 +20,8 @@ Finally, \code{\link{ensemble.downscale}} will run \code{\link{downscale}} and \
 
 The general flow of the package, and the inputs required for each function, is as follows:
 
-\if{html}{\figure{Flow.png}{options: width="65\%" alt="Figure: Flow.png"}}
-\if{latex}{\figure{Flow.png}{options: width=10cm}}
+\if{html}{\figure{Flow.png}{options: style="width: 65\%;"}}
+\if{latex}{\figure{Flow.png}{options: width = 10cm}}
 
 Two vignettes are available to guide users. Both work through examples in code:\cr
 

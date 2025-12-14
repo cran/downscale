@@ -69,10 +69,10 @@ The user may input their own threshold or use one of four suggested threshold cr
       1 \tab	Sampled_Only \tab \tab	Only cells that contain 100\% sampled atlas data are included. \cr
       }
 }
-\if{latex}{\figure{Threshold.png}{options: width=10cm}}
+\if{latex}{\figure{Threshold.png}{options: width = 10cm}}
 
-\if{html}{\figure{Maps.png}{options: width="75\%" alt="Figure: Maps.png"}}
-\if{latex}{\figure{Maps.png}{options: width=13cm}}
+\if{html}{\figure{Maps.png}{options: style="width: 75\%;"}}
+\if{latex}{\figure{Maps.png}{options: width = 13cm}}
 }
 \examples{
 ## example species data
